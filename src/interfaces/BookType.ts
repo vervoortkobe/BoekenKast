@@ -2,7 +2,7 @@ import { Book } from './Book.js';
 
 // soort: leesboek, stripboek, encyclopedie
 export interface BookType {
-    id: number,
+    id?: number,
     name: string,
-    books: Book[]
+    books?: Book[]
 }

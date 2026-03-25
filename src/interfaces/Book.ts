@@ -4,15 +4,15 @@ import { Lending } from './Lending.js';
 
 // boek: titel, auteur, isbn, kleur/zwartwit
 export interface Book {
-  id: number,
+  id?: number,
   title: string,
   author: string,
   isbn: string,
   bookType: BookType,
-  bookTypeId: number,
+  bookTypeId?: number,
   bookSeries: BookSeries,
-  bookSeriesId: number,
+  bookSeriesId?: number,
   color: boolean,
-  lendings: Lending[]
+  lendings?: Lending[]
 }
 

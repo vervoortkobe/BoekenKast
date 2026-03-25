@@ -2,7 +2,7 @@ import { Book } from './Book.js';
 
 // reeks: rode ridder, suske wiske
 export interface BookSeries {
-    id: number;
+    id?: number;
     name: string;
-    books: Book[];
+    books?: Book[];
 }
