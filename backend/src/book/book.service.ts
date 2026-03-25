@@ -11,7 +11,7 @@ export class BookService {
     sortOrder: 'asc' | 'desc' = 'asc',
     typeId?: number,
     seriesId?: number,
-    color?: boolean,
+    author?: string,
   ) {
     const skip = (page - 1) * limit;
     const orderBy = { [sortBy]: sortOrder };
@@ -19,7 +19,7 @@ export class BookService {
     const where: any = {};
     if (typeId) where.bookTypeId = typeId;
     if (seriesId) where.bookSeriesId = seriesId;
-    if (color !== undefined) where.color = color;
+    if (author) where.author = { contains: author, mode: 'insensitive' };
 
     return prisma.book.findMany({
       where,
