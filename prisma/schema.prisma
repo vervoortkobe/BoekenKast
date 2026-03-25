@@ -12,18 +12,40 @@ datasource db {
   provider = "sqlite"
 }
 
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  posts Post[]
-} 
+// soort: leesboek, stripboek, encyclopedie
+model BookType {
+  id    Int    @id @default(autoincrement())
+  name  String
+  books Book[]
+}
 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  Int
-} 
+// reeks: rode ridder, suske wiske
+model BookSeries {
+  id    Int    @id @default(autoincrement())
+  name  String
+  books Book[]
+}
+
+// boek: titel, auteur, isbn, kleur/zwartwit
+model Book {
+  id           Int         @id @default(autoincrement())
+  title        String
+  author       String
+  isbn         String
+  bookType     BookType    @relation(fields: [bookTypeId], references: [id])
+  bookTypeId   Int
+  bookSeries   BookSeries? @relation(fields: [bookSeriesId], references: [id])
+  bookSeriesId Int?
+  color        Boolean
+  lendings     Lending[]
+}
+
+// uitgeleend: aan wie, wanneer, teruggebracht wanneer?
+model Lending {
+  id         Int      @id @default(autoincrement())
+  name       String
+  date       DateTime @default(now())
+  returnDate DateTime @default(now())
+  book       Book     @relation(fields: [bookId], references: [id])
+  bookId     Int
+}
