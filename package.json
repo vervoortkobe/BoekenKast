@@ -6,13 +6,17 @@
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
+  "loader": "ts",
+  "imports": {
+    "#*": "./dist/src/*"
+  },
   "scripts": {
     "build": "bun nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "bun nest start",
     "start:dev": "bun nest start --watch",
     "start:debug": "bun nest start --debug --watch",
-    "start:prod": "bun node dist/main",
+    "start:prod": "bun dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

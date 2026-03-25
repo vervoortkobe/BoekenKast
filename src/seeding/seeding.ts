@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 
 async function seed() {
     // Create new bookTypes, if none found
@@ -16,7 +16,7 @@ async function seed() {
 
     // Fetch all books to display count
     const booksCount = await prisma.book.count();
-    console.log("> Books: ", booksCount);
+    console.log("> Books:", booksCount);
 }
 
 seed()
