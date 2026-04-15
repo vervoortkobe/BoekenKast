@@ -29,11 +29,11 @@ export class BookSeriesService {
   }
 
   async createBookSeries(bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.create({ data: bookSeries });
+    return prisma.bookSeries.create({ data: { name: bookSeries.name } });
   }
 
   async updateBookSeries(id: string, bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.update({ where: { id }, data: bookSeries });
+    return prisma.bookSeries.update({ where: { id }, data: { name: bookSeries.name } });
   }
 
   async deleteBookSeries(id: string) {

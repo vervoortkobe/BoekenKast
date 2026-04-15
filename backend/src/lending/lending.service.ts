@@ -30,11 +30,26 @@ export class LendingService {
   }
 
   createLending(lending: LendingDTO) {
-    return prisma.lending.create({ data: lending });
+    return prisma.lending.create({
+      data: {
+        name: lending.name,
+        date: lending.date,
+        returnDate: lending.returnDate,
+        bookId: lending.bookId as string,
+      },
+    });
   }
 
   updateLending(id: string, lending: LendingDTO) {
-    return prisma.lending.update({ where: { id }, data: lending });
+    return prisma.lending.update({
+      where: { id },
+      data: {
+        name: lending.name,
+        date: lending.date,
+        returnDate: lending.returnDate,
+        bookId: lending.bookId as string,
+      },
+    });
   }
 
   deleteLending(id: string) {
