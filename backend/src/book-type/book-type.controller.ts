@@ -26,7 +26,7 @@ export class BookTypeController {
   }
 
   @Get(':id')
-  async getBookType(@Param('id') id: number) {
+  async getBookType(@Param('id') id: string) {
     return this.bookTypeService.getBookType(id);
   }
 
@@ -36,12 +36,12 @@ export class BookTypeController {
   }
 
   @Put(':id')
-  async updateBookType(@Param('id') id: number, @Body() bookType: BookType) {
+  async updateBookType(@Param('id') id: string, @Body() bookType: BookType) {
     return this.bookTypeService.updateBookType(id, bookType);
   }
 
   @Delete(':id')
-  async deleteBookType(@Param('id') id: number) {
+  async deleteBookType(@Param('id') id: string) {
     return this.bookTypeService.deleteBookType(id);
   }
 }

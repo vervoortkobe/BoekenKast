@@ -9,10 +9,10 @@ export const getLendings = (params?: Record<string, any>) => {
   return httpGet(`/lending${query}`)
 }
 
-export const getLending = (id: number) => httpGet(`/lending/${id}`)
+export const getLending = (id: string) => httpGet(`/lending/${id}`)
 
 export const createLending = (data: any) => httpPost('/lending', data)
 
-export const updateLending = (id: number, data: any) => httpPut(`/lending/${id}`, data)
+export const updateLending = (id: string, data: any) => httpPut(`/lending/${id}`, data)
 
-export const deleteLending = (id: number) => httpDelete(`/lending/${id}`)
+export const deleteLending = (id: string) => httpDelete(`/lending/${id}`)

@@ -21,7 +21,7 @@ export class BookTypeService {
     });
   }
 
-  async getBookType(id: number) {
+  async getBookType(id: string) {
     return prisma.bookType.findUnique({
       where: { id },
       include: { books: true },
@@ -32,11 +32,11 @@ export class BookTypeService {
     return prisma.bookType.create({ data: bookType });
   }
 
-  async updateBookType(id: number, bookType: BookType) {
+  async updateBookType(id: string, bookType: BookType) {
     return prisma.bookType.update({ where: { id }, data: bookType });
   }
 
-  async deleteBookType(id: number) {
+  async deleteBookType(id: string) {
     return prisma.bookType.delete({ where: { id } });
   }
 }

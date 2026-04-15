@@ -21,7 +21,7 @@ export class LendingController {
     @Query('limit') limit: number = 10,
     @Query('sortBy') sortBy: string = 'lendingDate',
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'desc',
-    @Query('bookId') bookId?: number,
+    @Query('bookId') bookId?: string,
   ) {
     return this.lendingService.getAllLendings(
       page,
@@ -33,7 +33,7 @@ export class LendingController {
   }
 
   @Get(':id')
-  async getLending(@Param('id') id: number) {
+  async getLending(@Param('id') id: string) {
     return this.lendingService.getLending(id);
   }
 
@@ -43,12 +43,12 @@ export class LendingController {
   }
 
   @Put(':id')
-  async updateLending(@Param('id') id: number, @Body() lending: Lending) {
+  async updateLending(@Param('id') id: string, @Body() lending: Lending) {
     return this.lendingService.updateLending(id, lending);
   }
 
   @Delete(':id')
-  async deleteLending(@Param('id') id: number) {
+  async deleteLending(@Param('id') id: string) {
     return this.lendingService.deleteLending(id);
   }
 }

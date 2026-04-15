@@ -21,7 +21,7 @@ export class BookSeriesService {
     });
   }
 
-  async getBookSeries(id: number) {
+  async getBookSeries(id: string) {
     return prisma.bookSeries.findUnique({
       where: { id },
       include: { books: true },
@@ -32,11 +32,11 @@ export class BookSeriesService {
     return prisma.bookSeries.create({ data: bookSeries });
   }
 
-  async updateBookSeries(id: number, bookSeries: BookSeries) {
+  async updateBookSeries(id: string, bookSeries: BookSeries) {
     return prisma.bookSeries.update({ where: { id }, data: bookSeries });
   }
 
-  async deleteBookSeries(id: number) {
+  async deleteBookSeries(id: string) {
     return prisma.bookSeries.delete({ where: { id } });
   }
 }

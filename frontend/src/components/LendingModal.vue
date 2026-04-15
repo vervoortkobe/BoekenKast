@@ -50,7 +50,7 @@ import { createLending } from '../api/lendings'
 
 const props = defineProps<{
   show: boolean
-  bookId: number
+  bookId: string
   bookTitle: string
 }>()
 
@@ -70,8 +70,8 @@ const form = ref({
 function submitLending() {
   createLending({
     name: form.value.name,
-    date: new Date(form.value.date).toISOString(),
-    returnDate: new Date(form.value.returnDate).toISOString(),
+    date: new Date(form.value.date as string).toISOString(),
+    returnDate: new Date(form.value.returnDate as string).toISOString(),
     bookId: props.bookId,
   }).subscribe({
     next: () => {

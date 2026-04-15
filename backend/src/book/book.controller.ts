@@ -21,8 +21,8 @@ export class BookController {
     @Query('limit') limit: number = 10,
     @Query('sortBy') sortBy: string = 'title',
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
-    @Query('typeId') typeId?: number,
-    @Query('seriesId') seriesId?: number,
+    @Query('typeId') typeId?: string,
+    @Query('seriesId') seriesId?: string,
     @Query('author') author?: string, // Add author filter
   ) {
     return this.bookService.getAllBooks(
@@ -37,7 +37,7 @@ export class BookController {
   }
 
   @Get(':id')
-  async getBook(@Param('id') id: number) {
+  async getBook(@Param('id') id: string) {
     return this.bookService.getBook(id);
   }
 
@@ -47,12 +47,12 @@ export class BookController {
   }
 
   @Put(':id')
-  async updateBook(@Param('id') id: number, @Body() book: Book) {
+  async updateBook(@Param('id') id: string, @Body() book: Book) {
     return this.bookService.updateBook(id, book);
   }
 
   @Delete(':id')
-  async deleteBook(@Param('id') id: number) {
+  async deleteBook(@Param('id') id: string) {
     return this.bookService.deleteBook(id);
   }
 }

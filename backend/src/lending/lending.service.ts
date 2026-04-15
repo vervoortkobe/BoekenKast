@@ -9,7 +9,7 @@ export class LendingService {
     limit: number = 10,
     sortBy: string = 'lendingDate',
     sortOrder: 'asc' | 'desc' = 'desc',
-    bookId?: number,
+    bookId?: string,
   ) {
     const skip = (page - 1) * limit;
     const orderBy = { [sortBy]: sortOrder };
@@ -25,7 +25,7 @@ export class LendingService {
     });
   }
 
-  getLending(id: number) {
+  getLending(id: string) {
     return prisma.lending.findUnique({ where: { id } });
   }
 
@@ -33,11 +33,11 @@ export class LendingService {
     return prisma.lending.create({ data: lending });
   }
 
-  updateLending(id: number, lending: Lending) {
+  updateLending(id: string, lending: Lending) {
     return prisma.lending.update({ where: { id }, data: lending });
   }
 
-  deleteLending(id: number) {
+  deleteLending(id: string) {
     return prisma.lending.delete({ where: { id } });
   }
 }

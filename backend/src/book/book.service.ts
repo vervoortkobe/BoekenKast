@@ -9,8 +9,8 @@ export class BookService {
     limit: number = 10,
     sortBy: string = 'title',
     sortOrder: 'asc' | 'desc' = 'asc',
-    typeId?: number,
-    seriesId?: number,
+    typeId?: string,
+    seriesId?: string,
     author?: string,
   ) {
     const skip = (page - 1) * limit;
@@ -30,7 +30,7 @@ export class BookService {
     });
   }
 
-  async getBook(id: number) {
+  async getBook(id: string) {
     return prisma.book.findUnique({
       where: { id },
       include: { bookType: true, bookSeries: true, lendings: true },
@@ -51,7 +51,7 @@ export class BookService {
     });
   }
 
-  async updateBook(id: number, book: Book) {
+  async updateBook(id: string, book: Book) {
     return prisma.book.update({
       where: { id },
       data: {
@@ -66,7 +66,7 @@ export class BookService {
     });
   }
 
-  async deleteBook(id: number) {
+  async deleteBook(id: string) {
     return prisma.book.delete({ where: { id } });
   }
 }

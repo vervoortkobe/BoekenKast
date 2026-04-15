@@ -4,14 +4,14 @@ import { Lending } from './lending.dto.js';
 
 // boek: titel, auteur, isbn, kleur/zwartwit
 export interface Book {
-  id?: number;
+  id?: string;
   title: string;
   author: string;
   isbn: string;
   bookType: BookType;
-  bookTypeId?: number;
+  bookTypeId?: string;
   bookSeries: BookSeries;
-  bookSeriesId?: number;
+  bookSeriesId?: string;
   color: boolean;
   lendings?: Lending[];
 }

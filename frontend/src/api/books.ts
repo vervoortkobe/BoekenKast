@@ -9,10 +9,10 @@ export const getBooks = (params?: Record<string, any>) => {
   return httpGet(`/books${query}`)
 }
 
-export const getBook = (id: number) => httpGet(`/books/${id}`)
+export const getBook = (id: string) => httpGet(`/books/${id}`)
 
 export const createBook = (data: any) => httpPost('/books', data)
 
-export const updateBook = (id: number, data: any) => httpPut(`/books/${id}`, data)
+export const updateBook = (id: string, data: any) => httpPut(`/books/${id}`, data)
 
-export const deleteBook = (id: number) => httpDelete(`/books/${id}`)
+export const deleteBook = (id: string) => httpDelete(`/books/${id}`)

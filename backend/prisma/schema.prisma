@@ -14,38 +14,38 @@ datasource db {
 
 // soort: leesboek, stripboek, encyclopedie
 model BookType {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String
   books Book[]
 }
 
 // reeks: rode ridder, suske wiske
 model BookSeries {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String
   books Book[]
 }
 
 // boek: titel, auteur, isbn, kleur/zwartwit
 model Book {
-  id           Int         @id @default(autoincrement())
+  id           String      @id @default(uuid())
   title        String
   author       String
   isbn         String
   bookType     BookType    @relation(fields: [bookTypeId], references: [id])
-  bookTypeId   Int
+  bookTypeId   String
   bookSeries   BookSeries? @relation(fields: [bookSeriesId], references: [id])
-  bookSeriesId Int?
+  bookSeriesId String?
   color        Boolean
   lendings     Lending[]
 }
 
 // uitgeleend: aan wie, wanneer, teruggebracht wanneer?
 model Lending {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   name       String
   date       DateTime @default(now())
   returnDate DateTime @default(now())
   book       Book     @relation(fields: [bookId], references: [id])
-  bookId     Int
+  bookId     String
 }

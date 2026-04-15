@@ -130,7 +130,7 @@
     <!-- Lending Modal -->
     <LendingModal
       :show="showLending"
-      :book-id="lendingBook?.id ?? 0"
+      :book-id="lendingBook?.id ?? ''"
       :book-title="lendingBook?.title ?? ''"
       @close="showLending = false"
       @created="onLendingCreated"
@@ -152,7 +152,7 @@ import LendingModal from '../../components/LendingModal.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 
 const route = useRoute()
-const seriesId = Number(route.params.id)
+const seriesId = String(route.params.id)
 const seriesName = ref('Loading...')
 const books = ref<any[]>([])
 const bookTypes = ref<any[]>([])

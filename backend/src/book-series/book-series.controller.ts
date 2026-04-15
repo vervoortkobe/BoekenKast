@@ -31,7 +31,7 @@ export class BookSeriesController {
   }
 
   @Get(':id')
-  async getBookSeries(@Param('id') id: number) {
+  async getBookSeries(@Param('id') id: string) {
     return this.bookSeriesService.getBookSeries(id);
   }
 
@@ -42,14 +42,14 @@ export class BookSeriesController {
 
   @Put(':id')
   async updateBookSeries(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() bookSeries: BookSeries,
   ) {
     return this.bookSeriesService.updateBookSeries(id, bookSeries);
   }
 
   @Delete(':id')
-  async deleteBookSeries(@Param('id') id: number) {
+  async deleteBookSeries(@Param('id') id: string) {
     return this.bookSeriesService.deleteBookSeries(id);
   }
 }
