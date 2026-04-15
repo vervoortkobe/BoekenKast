@@ -1,8 +1,8 @@
-import { Book } from './book.dto.js';
+import { BookDTO } from './book.dto.js';
 
 // soort: leesboek, stripboek, encyclopedie
-export interface BookType {
-  id?: number;
+export interface BookTypeDTO {
+  id?: string;
   name: string;
-  books?: Book[];
+  books?: BookDTO[];
 }

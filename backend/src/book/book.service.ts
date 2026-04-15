@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
-import { Book } from '../dto/book.dto.js';
+import { BookDTO } from '../dto/book.dto.js';
 
 @Injectable()
 export class BookService {
@@ -9,9 +9,9 @@ export class BookService {
     limit: number = 10,
     sortBy: string = 'title',
     sortOrder: 'asc' | 'desc' = 'asc',
-    typeId?: number,
-    seriesId?: number,
-    color?: boolean,
+    typeId?: string,
+    seriesId?: string,
+    author?: string,
   ) {
     const skip = (page - 1) * limit;
     const orderBy = { [sortBy]: sortOrder };
@@ -19,7 +19,7 @@ export class BookService {
     const where: any = {};
     if (typeId) where.bookTypeId = typeId;
     if (seriesId) where.bookSeriesId = seriesId;
-    if (color !== undefined) where.color = color;
+    if (author) where.author = { contains: author, mode: 'insensitive' };
 
     return prisma.book.findMany({
       where,
@@ -30,14 +30,14 @@ export class BookService {
     });
   }
 
-  async getBook(id: number) {
+  async getBook(id: string) {
     return prisma.book.findUnique({
       where: { id },
       include: { bookType: true, bookSeries: true, lendings: true },
     });
   }
 
-  async createBook(book: Book) {
+  async createBook(book: BookDTO) {
     return prisma.book.create({
       data: {
         title: book.title,
@@ -51,7 +51,7 @@ export class BookService {
     });
   }
 
-  async updateBook(id: number, book: Book) {
+  async updateBook(id: string, book: BookDTO) {
     return prisma.book.update({
       where: { id },
       data: {
@@ -66,7 +66,7 @@ export class BookService {
     });
   }
 
-  async deleteBook(id: number) {
+  async deleteBook(id: string) {
     return prisma.book.delete({ where: { id } });
   }
 }

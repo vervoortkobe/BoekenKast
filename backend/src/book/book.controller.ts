@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BookService } from './book.service.js';
-import type { Book } from '../dto/book.dto.js';
+import type { BookDTO } from '../dto/book.dto.js';
 
 @Controller('books')
 export class BookController {
@@ -21,9 +21,9 @@ export class BookController {
     @Query('limit') limit: number = 10,
     @Query('sortBy') sortBy: string = 'title',
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
-    @Query('typeId') typeId?: number,
-    @Query('seriesId') seriesId?: number,
-    @Query('color') color?: boolean,
+    @Query('typeId') typeId?: string,
+    @Query('seriesId') seriesId?: string,
+    @Query('author') author?: string, // Add author filter
   ) {
     return this.bookService.getAllBooks(
       page,
@@ -32,27 +32,27 @@ export class BookController {
       sortOrder,
       typeId,
       seriesId,
-      color,
+      author,
     );
   }
 
   @Get(':id')
-  async getBook(@Param('id') id: number) {
+  async getBook(@Param('id') id: string) {
     return this.bookService.getBook(id);
   }
 
   @Post()
-  async createBook(@Body() book: Book) {
+  async createBook(@Body() book: BookDTO) {
     return this.bookService.createBook(book);
   }
 
   @Put(':id')
-  async updateBook(@Param('id') id: number, @Body() book: Book) {
+  async updateBook(@Param('id') id: string, @Body() book: BookDTO) {
     return this.bookService.updateBook(id, book);
   }
 
   @Delete(':id')
-  async deleteBook(@Param('id') id: number) {
+  async deleteBook(@Param('id') id: string) {
     return this.bookService.deleteBook(id);
   }
 }

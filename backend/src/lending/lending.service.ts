@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
-import { Lending } from '../dto/lending.dto.js';
+import { LendingDTO } from '../dto/lending.dto.js';
 
 @Injectable()
 export class LendingService {
@@ -9,7 +9,7 @@ export class LendingService {
     limit: number = 10,
     sortBy: string = 'lendingDate',
     sortOrder: 'asc' | 'desc' = 'desc',
-    bookId?: number,
+    bookId?: string,
   ) {
     const skip = (page - 1) * limit;
     const orderBy = { [sortBy]: sortOrder };
@@ -25,19 +25,19 @@ export class LendingService {
     });
   }
 
-  getLending(id: number) {
+  getLending(id: string) {
     return prisma.lending.findUnique({ where: { id } });
   }
 
-  createLending(lending: Lending) {
+  createLending(lending: LendingDTO) {
     return prisma.lending.create({ data: lending });
   }
 
-  updateLending(id: number, lending: Lending) {
+  updateLending(id: string, lending: LendingDTO) {
     return prisma.lending.update({ where: { id }, data: lending });
   }
 
-  deleteLending(id: number) {
+  deleteLending(id: string) {
     return prisma.lending.delete({ where: { id } });
   }
 }

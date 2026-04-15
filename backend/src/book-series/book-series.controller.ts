@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BookSeriesService } from './book-series.service.js';
-import type { BookSeries } from '../dto/book-series.dto.js';
+import type { BookSeriesDTO } from '../dto/book-series.dto.js';
 
 @Controller('book-series')
 export class BookSeriesController {
@@ -31,25 +31,25 @@ export class BookSeriesController {
   }
 
   @Get(':id')
-  async getBookSeries(@Param('id') id: number) {
+  async getBookSeries(@Param('id') id: string) {
     return this.bookSeriesService.getBookSeries(id);
   }
 
   @Post()
-  async createBookSeries(@Body() bookSeries: BookSeries) {
+  async createBookSeries(@Body() bookSeries: BookSeriesDTO) {
     return this.bookSeriesService.createBookSeries(bookSeries);
   }
 
   @Put(':id')
   async updateBookSeries(
-    @Param('id') id: number,
-    @Body() bookSeries: BookSeries,
+    @Param('id') id: string,
+    @Body() bookSeries: BookSeriesDTO,
   ) {
     return this.bookSeriesService.updateBookSeries(id, bookSeries);
   }
 
   @Delete(':id')
-  async deleteBookSeries(@Param('id') id: number) {
+  async deleteBookSeries(@Param('id') id: string) {
     return this.bookSeriesService.deleteBookSeries(id);
   }
 }

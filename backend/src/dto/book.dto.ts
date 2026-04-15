@@ -1,17 +1,17 @@
-import { BookType } from './book-type.dto.js';
-import { BookSeries } from './book-series.dto.js';
-import { Lending } from './lending.dto.js';
+import { BookTypeDTO } from './book-type.dto.js';
+import { BookSeriesDTO } from './book-series.dto.js';
+import { LendingDTO } from './lending.dto.js';
 
 // boek: titel, auteur, isbn, kleur/zwartwit
-export interface Book {
-  id?: number;
+export interface BookDTO {
+  id?: string;
   title: string;
   author: string;
   isbn: string;
-  bookType: BookType;
-  bookTypeId?: number;
-  bookSeries: BookSeries;
-  bookSeriesId?: number;
+  bookType: BookTypeDTO;
+  bookTypeId?: string;
+  bookSeries: BookSeriesDTO;
+  bookSeriesId?: string;
   color: boolean;
-  lendings?: Lending[];
+  lendings?: LendingDTO[];
 }

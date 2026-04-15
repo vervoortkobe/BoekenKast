@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
-import { BookSeries } from '../dto/book-series.dto.js';
+import { BookSeriesDTO } from '../dto/book-series.dto.js';
 
 @Injectable()
 export class BookSeriesService {
@@ -21,22 +21,22 @@ export class BookSeriesService {
     });
   }
 
-  async getBookSeries(id: number) {
+  async getBookSeries(id: string) {
     return prisma.bookSeries.findUnique({
       where: { id },
       include: { books: true },
     });
   }
 
-  async createBookSeries(bookSeries: BookSeries) {
+  async createBookSeries(bookSeries: BookSeriesDTO) {
     return prisma.bookSeries.create({ data: bookSeries });
   }
 
-  async updateBookSeries(id: number, bookSeries: BookSeries) {
+  async updateBookSeries(id: string, bookSeries: BookSeriesDTO) {
     return prisma.bookSeries.update({ where: { id }, data: bookSeries });
   }
 
-  async deleteBookSeries(id: number) {
+  async deleteBookSeries(id: string) {
     return prisma.bookSeries.delete({ where: { id } });
   }
 }
