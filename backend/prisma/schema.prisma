@@ -14,21 +14,21 @@ datasource db {
 
 // soort: leesboek, stripboek, encyclopedie
 model BookType {
-  id    String @id @default(uuid())
+  id    String @id @default(cuid())
   name  String
   books Book[]
 }
 
 // reeks: rode ridder, suske wiske
 model BookSeries {
-  id    String @id @default(uuid())
+  id    String @id @default(cuid())
   name  String
   books Book[]
 }
 
 // boek: titel, auteur, isbn, kleur/zwartwit
 model Book {
-  id           String      @id @default(uuid())
+  id           String      @id @default(cuid())
   title        String
   author       String
   isbn         String
@@ -42,7 +42,7 @@ model Book {
 
 // uitgeleend: aan wie, wanneer, teruggebracht wanneer?
 model Lending {
-  id         String   @id @default(uuid())
+  id         String   @id @default(cuid())
   name       String
   date       DateTime @default(now())
   returnDate DateTime @default(now())
