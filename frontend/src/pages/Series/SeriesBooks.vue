@@ -146,6 +146,7 @@ import { useRoute } from 'vue-router'
 import { getBookSeriesById } from '../../api/series'
 import { getBooks, createBook, updateBook, deleteBook } from '../../api/books'
 import { getBookTypes } from '../../api/bookTypes'
+import type { BookDTO, BookTypeDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import LendingModal from '../../components/LendingModal.vue'
@@ -154,16 +155,16 @@ import ToastNotification from '../../components/ToastNotification.vue'
 const route = useRoute()
 const seriesId = String(route.params.id)
 const seriesName = ref('Loading...')
-const books = ref<any[]>([])
-const bookTypes = ref<any[]>([])
+const books = ref<BookDTO[]>([])
+const bookTypes = ref<BookTypeDTO[]>([])
 const search = ref('')
 
 const showForm = ref(false)
 const showDelete = ref(false)
 const showLending = ref(false)
-const editingBook = ref<any>(null)
-const deletingBook = ref<any>(null)
-const lendingBook = ref<any>(null)
+const editingBook = ref<BookDTO | null>(null)
+const deletingBook = ref<BookDTO | null>(null)
+const lendingBook = ref<BookDTO | null>(null)
 
 const form = ref({
   title: '',
@@ -179,7 +180,7 @@ const filteredBooks = computed(() => {
   if (!search.value) return books.value
   const q = search.value.toLowerCase()
   return books.value.filter(
-    (b: any) =>
+    (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
       b.author.toLowerCase().includes(q) ||
       b.isbn.toLowerCase().includes(q)
@@ -192,23 +193,23 @@ function load() {
     error: (err: any) => console.error(err),
   })
   getBooks({ seriesId }).subscribe({
-    next: (data: any) => (books.value = data),
+    next: (data: BookDTO[]) => (books.value = data),
     error: (err: any) => console.error(err),
   })
   getBookTypes().subscribe({
-    next: (data: any) => (bookTypes.value = data),
+    next: (data: BookTypeDTO[]) => (bookTypes.value = data),
     error: (err: any) => console.error(err),
   })
 }
 
-function openForm(book?: any) {
+function openForm(book?: BookDTO) {
   if (book) {
     editingBook.value = book
     form.value = {
       title: book.title,
       author: book.author,
       isbn: book.isbn,
-      bookTypeId: book.bookTypeId,
+      bookTypeId: book.bookTypeId ?? '',
       color: book.color,
     }
   } else {
@@ -224,17 +225,17 @@ function closeForm() {
 }
 
 function save() {
-  const payload = {
+  const payload: BookDTO = {
     title: form.value.title,
     author: form.value.author,
     isbn: form.value.isbn,
-    bookTypeId: Number(form.value.bookTypeId),
+    bookTypeId: form.value.bookTypeId as string,
     bookSeriesId: seriesId,
     color: form.value.color,
   }
 
   const op = editingBook.value
-    ? updateBook(editingBook.value.id, payload)
+    ? updateBook(editingBook.value.id!, payload)
     : createBook(payload)
 
   op.subscribe({
@@ -253,14 +254,14 @@ function save() {
   })
 }
 
-function confirmDelete(book: any) {
+function confirmDelete(book: BookDTO) {
   deletingBook.value = book
   showDelete.value = true
 }
 
 function remove() {
   if (!deletingBook.value) return
-  deleteBook(deletingBook.value.id).subscribe({
+  deleteBook(deletingBook.value.id!).subscribe({
     next: () => {
       toast.value?.addToast('Book deleted successfully', 'success')
       showDelete.value = false
@@ -274,7 +275,7 @@ function remove() {
   })
 }
 
-function openLending(book: any) {
+function openLending(book: BookDTO) {
   lendingBook.value = book
   showLending.value = true
 }

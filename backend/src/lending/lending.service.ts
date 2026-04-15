@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
-import { Lending } from '../dto/lending.dto.js';
+import { LendingDTO } from '../dto/lending.dto.js';
 
 @Injectable()
 export class LendingService {
@@ -29,11 +29,11 @@ export class LendingService {
     return prisma.lending.findUnique({ where: { id } });
   }
 
-  createLending(lending: Lending) {
+  createLending(lending: LendingDTO) {
     return prisma.lending.create({ data: lending });
   }
 
-  updateLending(id: string, lending: Lending) {
+  updateLending(id: string, lending: LendingDTO) {
     return prisma.lending.update({ where: { id }, data: lending });
   }
 

@@ -100,16 +100,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { getLendings, updateLending, deleteLending } from '../../api/lendings'
+import type { LendingDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 
-const lendings = ref<any[]>([])
+const lendings = ref<LendingDTO[]>([])
 const search = ref('')
 const showForm = ref(false)
 const showDelete = ref(false)
-const editingLending = ref<any>(null)
-const deletingLending = ref<any>(null)
+const editingLending = ref<LendingDTO | null>(null)
+const deletingLending = ref<LendingDTO | null>(null)
 
 const form = ref({ name: '', date: '', returnDate: '' })
 const toast = ref<InstanceType<typeof ToastNotification>>()
@@ -118,7 +119,7 @@ const filteredLendings = computed(() => {
   if (!search.value) return lendings.value
   const q = search.value.toLowerCase()
   return lendings.value.filter(
-    (l: any) =>
+    (l: LendingDTO) =>
       l.name.toLowerCase().includes(q) ||
       (l.book?.title ?? '').toLowerCase().includes(q)
   )
@@ -133,23 +134,23 @@ function formatDate(d: string | Date) {
   })
 }
 
-function isOverdue(lending: any) {
+function isOverdue(lending: LendingDTO) {
   return new Date(lending.returnDate) < new Date()
 }
 
 function load() {
   getLendings({ sortBy: 'date', sortOrder: 'desc', limit: 100 }).subscribe({
-    next: (data: any) => (lendings.value = data),
+    next: (data: LendingDTO[]) => (lendings.value = data),
     error: (err: any) => console.error(err),
   })
 }
 
-function openForm(lending: any) {
+function openForm(lending: LendingDTO) {
   editingLending.value = lending
   form.value = {
     name: lending.name,
-    date: new Date(lending.date).toISOString().split('T')[0],
-    returnDate: new Date(lending.returnDate).toISOString().split('T')[0],
+    date: new Date(lending.date as string | Date).toISOString().split('T')[0] || '',
+    returnDate: new Date(lending.returnDate as string | Date).toISOString().split('T')[0] || '',
   }
   showForm.value = true
 }
@@ -162,7 +163,7 @@ function closeForm() {
 function save() {
   if (!editingLending.value) return
 
-  updateLending(editingLending.value.id, {
+  updateLending(editingLending.value.id!, {
     name: form.value.name,
     date: new Date(form.value.date).toISOString(),
     returnDate: new Date(form.value.returnDate).toISOString(),
@@ -180,14 +181,14 @@ function save() {
   })
 }
 
-function confirmDelete(lending: any) {
+function confirmDelete(lending: LendingDTO) {
   deletingLending.value = lending
   showDelete.value = true
 }
 
 function remove() {
   if (!deletingLending.value) return
-  deleteLending(deletingLending.value.id).subscribe({
+  deleteLending(deletingLending.value.id!).subscribe({
     next: () => {
       toast.value?.addToast('Lending deleted successfully', 'success')
       showDelete.value = false

@@ -23,7 +23,7 @@
             <h3 class="bk-card-title" style="cursor: pointer;">{{ s.name }}</h3>
           </router-link>
           <p class="bk-card-subtitle">
-            <span :class="['bk-badge', s.books?.length > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
+            <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
               {{ s.books?.length ?? 0 }} book{{ (s.books?.length ?? 0) === 1 ? '' : 's' }}
             </span>
           </p>
@@ -91,15 +91,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { getBookSeries, createBookSeries, updateBookSeries, deleteBookSeries } from '../../api/series'
+import type { BookSeriesDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 
-const series = ref<any[]>([])
+const series = ref<BookSeriesDTO[]>([])
 const showForm = ref(false)
 const showDelete = ref(false)
-const editingSeries = ref<any>(null)
-const deletingSeries = ref<any>(null)
+const editingSeries = ref<BookSeriesDTO | null>(null)
+const deletingSeries = ref<BookSeriesDTO | null>(null)
 const form = ref({ name: '' })
 const search = ref('')
 const toast = ref<InstanceType<typeof ToastNotification>>()
@@ -107,17 +108,17 @@ const toast = ref<InstanceType<typeof ToastNotification>>()
 const filteredSeries = computed(() => {
   if (!search.value) return series.value
   const q = search.value.toLowerCase()
-  return series.value.filter((s: any) => s.name.toLowerCase().includes(q))
+  return series.value.filter((s: BookSeriesDTO) => s.name.toLowerCase().includes(q))
 })
 
 function load() {
   getBookSeries().subscribe({
-    next: (data: any) => (series.value = data),
+    next: (data: BookSeriesDTO[]) => (series.value = data),
     error: (err: any) => console.error(err),
   })
 }
 
-function openForm(s?: any) {
+function openForm(s?: BookSeriesDTO) {
   if (s) {
     editingSeries.value = s
     form.value = { name: s.name }
@@ -136,7 +137,7 @@ function closeForm() {
 
 function save() {
   const op = editingSeries.value
-    ? updateBookSeries(editingSeries.value.id, form.value)
+    ? updateBookSeries(editingSeries.value.id!, form.value)
     : createBookSeries(form.value)
 
   op.subscribe({
@@ -155,14 +156,14 @@ function save() {
   })
 }
 
-function confirmDelete(s: any) {
+function confirmDelete(s: BookSeriesDTO) {
   deletingSeries.value = s
   showDelete.value = true
 }
 
 function remove() {
   if (!deletingSeries.value) return
-  deleteBookSeries(deletingSeries.value.id).subscribe({
+  deleteBookSeries(deletingSeries.value.id!).subscribe({
     next: () => {
       toast.value?.addToast('Series deleted successfully', 'success')
       showDelete.value = false

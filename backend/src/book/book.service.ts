@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
-import { Book } from '../dto/book.dto.js';
+import { BookDTO } from '../dto/book.dto.js';
 
 @Injectable()
 export class BookService {
@@ -37,7 +37,7 @@ export class BookService {
     });
   }
 
-  async createBook(book: Book) {
+  async createBook(book: BookDTO) {
     return prisma.book.create({
       data: {
         title: book.title,
@@ -51,7 +51,7 @@ export class BookService {
     });
   }
 
-  async updateBook(id: string, book: Book) {
+  async updateBook(id: string, book: BookDTO) {
     return prisma.book.update({
       where: { id },
       data: {

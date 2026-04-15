@@ -20,7 +20,7 @@
             <h3 class="bk-card-title" style="cursor: pointer;">{{ type.name }}</h3>
           </router-link>
           <p class="bk-card-subtitle">
-            <span :class="['bk-badge', type.books?.length > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
+            <span :class="['bk-badge', (type.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
               {{ type.books?.length ?? 0 }} book{{ (type.books?.length ?? 0) === 1 ? '' : 's' }}
             </span>
           </p>
@@ -86,25 +86,26 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getBookTypes, createBookType, updateBookType, deleteBookType } from '../../api/bookTypes'
+import type { BookTypeDTO } from '../../types'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 
-const types = ref<any[]>([])
+const types = ref<BookTypeDTO[]>([])
 const showForm = ref(false)
 const showDelete = ref(false)
-const editingType = ref<any>(null)
-const deletingType = ref<any>(null)
+const editingType = ref<BookTypeDTO | null>(null)
+const deletingType = ref<BookTypeDTO | null>(null)
 const form = ref({ name: '' })
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 function load() {
   getBookTypes().subscribe({
-    next: (data: any) => (types.value = data),
+    next: (data: BookTypeDTO[]) => (types.value = data),
     error: (err: any) => console.error(err),
   })
 }
 
-function openForm(type?: any) {
+function openForm(type?: BookTypeDTO) {
   if (type) {
     editingType.value = type
     form.value = { name: type.name }
@@ -123,7 +124,7 @@ function closeForm() {
 
 function save() {
   const op = editingType.value
-    ? updateBookType(editingType.value.id, form.value)
+    ? updateBookType(editingType.value.id!, form.value)
     : createBookType(form.value)
 
   op.subscribe({
@@ -142,14 +143,14 @@ function save() {
   })
 }
 
-function confirmDelete(type: any) {
+function confirmDelete(type: BookTypeDTO) {
   deletingType.value = type
   showDelete.value = true
 }
 
 function remove() {
   if (!deletingType.value) return
-  deleteBookType(deletingType.value.id).subscribe({
+  deleteBookType(deletingType.value.id!).subscribe({
     next: () => {
       toast.value?.addToast('Type deleted successfully', 'success')
       showDelete.value = false

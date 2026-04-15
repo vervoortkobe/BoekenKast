@@ -1,0 +1,33 @@
+export interface BookTypeDTO {
+  id?: string;
+  name: string;
+  books?: BookDTO[];
+}
+
+export interface BookSeriesDTO {
+  id?: string;
+  name: string;
+  books?: BookDTO[];
+}
+
+export interface LendingDTO {
+  id?: string;
+  name: string;
+  date: string | Date;
+  returnDate: string | Date;
+  book?: BookDTO;
+  bookId?: string;
+}
+
+export interface BookDTO {
+  id?: string;
+  title: string;
+  author: string;
+  isbn: string;
+  bookType?: BookTypeDTO;
+  bookTypeId?: string;
+  bookSeries?: BookSeriesDTO;
+  bookSeriesId?: string | null;
+  color: boolean;
+  lendings?: LendingDTO[];
+}

@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BookService } from './book.service.js';
-import type { Book } from '../dto/book.dto.js';
+import type { BookDTO } from '../dto/book.dto.js';
 
 @Controller('books')
 export class BookController {
@@ -42,12 +42,12 @@ export class BookController {
   }
 
   @Post()
-  async createBook(@Body() book: Book) {
+  async createBook(@Body() book: BookDTO) {
     return this.bookService.createBook(book);
   }
 
   @Put(':id')
-  async updateBook(@Param('id') id: string, @Body() book: Book) {
+  async updateBook(@Param('id') id: string, @Body() book: BookDTO) {
     return this.bookService.updateBook(id, book);
   }
 

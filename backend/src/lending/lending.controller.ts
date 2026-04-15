@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { LendingService } from './lending.service.js';
-import type { Lending } from '../dto/lending.dto.js';
+import type { LendingDTO } from '../dto/lending.dto.js';
 
 @Controller('lending')
 export class LendingController {
@@ -38,12 +38,12 @@ export class LendingController {
   }
 
   @Post()
-  async createLending(@Body() lending: Lending) {
+  async createLending(@Body() lending: LendingDTO) {
     return this.lendingService.createLending(lending);
   }
 
   @Put(':id')
-  async updateLending(@Param('id') id: string, @Body() lending: Lending) {
+  async updateLending(@Param('id') id: string, @Body() lending: LendingDTO) {
     return this.lendingService.updateLending(id, lending);
   }
 

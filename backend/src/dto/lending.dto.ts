@@ -1,11 +1,11 @@
-import { Book } from './book.dto.js';
+import { BookDTO } from './book.dto.js';
 
 // uitgeleend: aan wie, wanneer, teruggebracht wanneer?
-export interface Lending {
+export interface LendingDTO {
   id?: string;
   name: string;
   date: Date;
   returnDate: Date;
-  book: Book;
+  book: BookDTO;
   bookId?: string;
 }

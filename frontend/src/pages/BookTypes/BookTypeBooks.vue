@@ -81,6 +81,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBookType } from '../../api/bookTypes'
 import { getBooks } from '../../api/books'
+import type { BookDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import LendingModal from '../../components/LendingModal.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
@@ -88,11 +89,11 @@ import ToastNotification from '../../components/ToastNotification.vue'
 const route = useRoute()
 const typeId = String(route.params.id)
 const typeName = ref('Loading...')
-const books = ref<any[]>([])
+const books = ref<BookDTO[]>([])
 const search = ref('')
 
 const showLending = ref(false)
-const lendingBook = ref<any>(null)
+const lendingBook = ref<BookDTO | null>(null)
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
@@ -100,7 +101,7 @@ const filteredBooks = computed(() => {
   if (!search.value) return books.value
   const q = search.value.toLowerCase()
   return books.value.filter(
-    (b: any) =>
+    (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
       b.author.toLowerCase().includes(q) ||
       b.isbn.toLowerCase().includes(q)
@@ -115,12 +116,12 @@ function load() {
     error: (err: any) => console.error(err),
   })
   getBooks({ typeId }).subscribe({
-    next: (data: any) => (books.value = data),
+    next: (data: BookDTO[]) => (books.value = data),
     error: (err: any) => console.error(err),
   })
 }
 
-function openLending(book: any) {
+function openLending(book: BookDTO) {
   lendingBook.value = book
   showLending.value = true
 }
