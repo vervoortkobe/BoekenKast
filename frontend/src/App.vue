@@ -1,36 +1,56 @@
 <template>
-  <div class="page-wrapper with-navbar">
-    <nav class="navbar">
-      <div class="navbar-content">
-        <router-link class="navbar-brand" to="/">Library</router-link>
-      </div>
+  <div>
+    <!-- Navbar -->
+    <nav class="bk-navbar">
+      <router-link class="bk-navbar-brand" to="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        BoekenKast
+      </router-link>
 
-      <div class="navbar-content ml-auto">
-        <router-link class="nav-link" to="/types">Types</router-link>
-        <router-link class="nav-link" to="/series">Series</router-link>
-        <router-link class="nav-link" to="/lendings">Lendings</router-link>
+      <div class="bk-nav-links">
+        <router-link class="bk-nav-link" to="/types">📚 Types</router-link>
+        <router-link class="bk-nav-link" to="/series">📖 Series</router-link>
+        <router-link class="bk-nav-link" to="/lendings">📤 Lendings</router-link>
 
-        <!-- Dark/Light toggle -->
-        <button class="btn btn-action ml-10" @click="toggleTheme">
-          <i class="fa fa-adjust"></i>
+        <button class="bk-theme-toggle" @click="toggleTheme" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+          {{ isDark ? '☀️' : '🌙' }}
         </button>
       </div>
     </nav>
 
-    <div class="content-wrapper">
+    <!-- Content -->
+    <div class="bk-content">
       <router-view />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-function toggleTheme() {
-  halfmoon.toggleDarkMode()
-}
-</script>
+import { ref, onMounted } from 'vue'
 
-<style>
-.content-wrapper {
-  padding: 1rem;
+const isDark = ref(false)
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+  document.documentElement.setAttribute('data-bs-theme', isDark.value ? 'dark' : 'light')
+  localStorage.setItem('bk-theme', isDark.value ? 'dark' : 'light')
 }
-</style>
+
+onMounted(() => {
+  const saved = localStorage.getItem('bk-theme')
+  if (saved === 'dark') {
+    isDark.value = true
+    document.documentElement.setAttribute('data-bs-theme', 'dark')
+  } else if (!saved) {
+    // Detect system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    if (prefersDark) {
+      isDark.value = true
+      document.documentElement.setAttribute('data-bs-theme', 'dark')
+    }
+  }
+})
+</script>
