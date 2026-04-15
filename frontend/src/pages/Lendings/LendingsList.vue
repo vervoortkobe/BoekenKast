@@ -9,6 +9,7 @@
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <SearchBar v-model="search" placeholder="Search by borrower or book..." />
+        <button class="bk-btn bk-btn-primary" @click="openForm()">＋ Add Lending</button>
       </div>
     </div>
 
@@ -59,12 +60,20 @@
         <p class="bk-empty-text">
           {{ search ? 'Try adjusting your search terms.' : 'Lend a book from a series page to see it here.' }}
         </p>
+        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">＋ Add Lending</button>
       </div>
     </div>
 
     <!-- Edit Modal -->
-    <ModalDialog :show="showForm" title="Edit Lending" @close="closeForm">
+    <ModalDialog :show="showForm" :title="editingLending ? 'Edit Lending' : 'New Lending'" @close="closeForm">
       <form @submit.prevent="save">
+        <div class="bk-form-group" v-if="!editingLending">
+          <label class="bk-form-label">Book</label>
+          <select v-model="form.bookId" class="bk-form-select" required>
+            <option value="" disabled>Select a book</option>
+            <option v-for="b in books" :key="b.id" :value="b.id">{{ b.title }}</option>
+          </select>
+        </div>
         <div class="bk-form-group">
           <label class="bk-form-label">Borrower Name</label>
           <input v-model="form.name" class="bk-form-input" required />
@@ -79,7 +88,9 @@
         </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
-          <button type="submit" class="bk-btn bk-btn-primary">✓ Update</button>
+          <button type="submit" class="bk-btn bk-btn-primary">
+            {{ editingLending ? '✓ Update' : '＋ Create' }}
+          </button>
         </div>
       </form>
     </ModalDialog>
@@ -99,20 +110,22 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getLendings, updateLending, deleteLending } from '../../api/lendings'
-import type { LendingDTO } from '../../types'
+import { getLendings, updateLending, createLending, deleteLending } from '../../api/lendings'
+import { getBooks } from '../../api/books'
+import type { LendingDTO, BookDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 
 const lendings = ref<LendingDTO[]>([])
+const books = ref<BookDTO[]>([])
 const search = ref('')
 const showForm = ref(false)
 const showDelete = ref(false)
 const editingLending = ref<LendingDTO | null>(null)
 const deletingLending = ref<LendingDTO | null>(null)
 
-const form = ref({ name: '', date: '', returnDate: '' })
+const form = ref({ name: '', date: '', returnDate: '', bookId: '' })
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 const filteredLendings = computed(() => {
@@ -143,14 +156,24 @@ function load() {
     next: (data: LendingDTO[]) => (lendings.value = data),
     error: (err: any) => console.error(err),
   })
+  getBooks().subscribe({
+    next: (data: BookDTO[]) => (books.value = data),
+    error: (err: any) => console.error(err),
+  })
 }
 
-function openForm(lending: LendingDTO) {
-  editingLending.value = lending
-  form.value = {
-    name: lending.name,
-    date: new Date(lending.date as string | Date).toISOString().split('T')[0] || '',
-    returnDate: new Date(lending.returnDate as string | Date).toISOString().split('T')[0] || '',
+function openForm(lending?: LendingDTO) {
+  if (lending) {
+    editingLending.value = lending
+    form.value = {
+      name: lending.name,
+      date: new Date(lending.date as string | Date).toISOString().split('T')[0] || '',
+      returnDate: new Date(lending.returnDate as string | Date).toISOString().split('T')[0] || '',
+      bookId: lending.bookId ?? '',
+    }
+  } else {
+    editingLending.value = null
+    form.value = { name: '', date: new Date().toISOString().split('T')[0], returnDate: '', bookId: '' }
   }
   showForm.value = true
 }
@@ -161,16 +184,23 @@ function closeForm() {
 }
 
 function save() {
-  if (!editingLending.value) return
-
-  updateLending(editingLending.value.id!, {
+  const payload: any = {
     name: form.value.name,
     date: new Date(form.value.date).toISOString(),
     returnDate: new Date(form.value.returnDate).toISOString(),
-    bookId: editingLending.value.bookId,
-  }).subscribe({
+    bookId: editingLending.value ? editingLending.value.bookId : form.value.bookId,
+  }
+
+  const op = editingLending.value
+    ? updateLending(editingLending.value.id!, payload)
+    : createLending(payload)
+
+  op.subscribe({
     next: () => {
-      toast.value?.addToast('Lending updated successfully', 'success')
+      toast.value?.addToast(
+        editingLending.value ? 'Lending updated successfully' : 'Lending created successfully',
+        'success'
+      )
       closeForm()
       load()
     },

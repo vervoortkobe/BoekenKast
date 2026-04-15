@@ -11,7 +11,9 @@ export class LendingService {
     sortOrder: 'asc' | 'desc' = 'desc',
     bookId?: string,
   ) {
-    const skip = (page - 1) * limit;
+    const parsedPage = Number(page) || 1;
+    const parsedLimit = Number(limit) || 10;
+    const skip = (parsedPage - 1) * parsedLimit;
     const orderBy = { [sortBy]: sortOrder };
 
     const where = bookId ? { bookId } : {};
@@ -21,7 +23,7 @@ export class LendingService {
       include: { book: true },
       orderBy,
       skip,
-      take: limit,
+      take: parsedLimit,
     });
   }
 
