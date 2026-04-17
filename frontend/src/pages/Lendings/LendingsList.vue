@@ -173,7 +173,12 @@ function openForm(lending?: LendingDTO) {
     }
   } else {
     editingLending.value = null
-    form.value = { name: '', date: new Date().toISOString().split('T')[0], returnDate: '', bookId: '' }
+    form.value = { 
+      name: '', 
+      date: new Date().toISOString().split('T')[0] ?? '', 
+      returnDate: '', 
+      bookId: '' 
+    }
   }
   showForm.value = true
 }
@@ -188,7 +193,7 @@ function save() {
     name: form.value.name,
     date: new Date(form.value.date).toISOString(),
     returnDate: new Date(form.value.returnDate).toISOString(),
-    bookId: editingLending.value ? editingLending.value.bookId : form.value.bookId,
+    bookId: editingLending.value ? (editingLending.value.bookId ?? form.value.bookId) : form.value.bookId,
   }
 
   const op = editingLending.value

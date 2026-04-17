@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-const isDark = ref(false)
+const isDark = ref(true)
 
 function toggleTheme() {
   isDark.value = !isDark.value
@@ -41,16 +41,12 @@ function toggleTheme() {
 
 onMounted(() => {
   const saved = localStorage.getItem('bk-theme')
-  if (saved === 'dark') {
+  if (saved === 'dark' || !saved) {
     isDark.value = true
     document.documentElement.setAttribute('data-bs-theme', 'dark')
-  } else if (!saved) {
-    // Detect system preference
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (prefersDark) {
-      isDark.value = true
-      document.documentElement.setAttribute('data-bs-theme', 'dark')
-    }
+  } else if (saved === 'light') {
+    isDark.value = false
+    document.documentElement.setAttribute('data-bs-theme', 'light')
   }
 })
 </script>
