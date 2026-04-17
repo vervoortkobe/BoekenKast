@@ -2,7 +2,7 @@
   <div>
     <div class="bk-breadcrumb">
       <router-link to="/types">Types</router-link>
-      <span>›</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
       <span>{{ typeName }}</span>
     </div>
 
@@ -16,7 +16,8 @@
       <div style="display: flex; align-items: center; gap: 1rem;">
         <SearchBar v-model="search" placeholder="Search books..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
-          ＋ Add Book
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Book
         </button>
       </div>
     </div>
@@ -71,12 +72,17 @@
     <!-- Empty State -->
     <div v-else class="bk-card">
       <div class="bk-empty">
-        <div class="bk-empty-icon">📖</div>
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </div>
         <div class="bk-empty-title">No books found</div>
         <p class="bk-empty-text">
           {{ search ? 'Try adjusting your search.' : 'No books are assigned to this type yet.' }}
         </p>
-        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">＋ Add Book</button>
+        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Book
+        </button>
       </div>
     </div>
 
@@ -123,7 +129,9 @@
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
-            {{ editingBook ? '✓ Update' : '＋ Create' }}
+            <svg v-if="editingBook" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {{ editingBook ? 'Update' : 'Create' }}
           </button>
         </div>
       </form>
@@ -134,7 +142,10 @@
       <p>Are you sure you want to delete <strong>{{ deletingBook?.title }}</strong>?</p>
       <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
         <button class="bk-btn bk-btn-ghost" @click="showDelete = false">Cancel</button>
-        <button class="bk-btn bk-btn-danger" @click="remove()">🗑️ Delete</button>
+        <button class="bk-btn bk-btn-danger" @click="remove()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        Delete
+      </button>
       </div>
     </ModalDialog>
 
