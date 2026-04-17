@@ -18,30 +18,29 @@
     <!-- Cards Grid -->
     <div v-if="filteredSeries.length" class="bk-card-grid">
       <div v-for="s in filteredSeries" :key="s.id" class="bk-card">
-        <div class="bk-card-body">
-          <router-link :to="`/series/${s.id}/books`" style="text-decoration: none;">
-            <h3 class="bk-card-title" style="cursor: pointer;">{{ s.name }}</h3>
-          </router-link>
-          <p class="bk-card-subtitle">
-            <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
-              {{ s.books?.length ?? 0 }} book{{ (s.books?.length ?? 0) === 1 ? '' : 's' }}
-            </span>
-          </p>
-          <div class="bk-card-actions">
-            <router-link :to="`/series/${s.id}/books`" class="bk-btn bk-btn-ghost bk-btn-sm">
-              📖 View Books
+        <div class="bk-card-body" style="padding: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+            <router-link :to="`/series/${s.id}/books`" style="text-decoration: none; flex: 1;">
+              <h3 class="bk-card-title" style="margin: 0; font-size: 1.2rem;">{{ s.name }}</h3>
+              <p class="bk-card-subtitle" style="margin-top: 0.25rem;">
+                <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
+                  {{ s.books?.length ?? 0 }} book{{ (s.books?.length ?? 0) === 1 ? '' : 's' }}
+                </span>
+              </p>
             </router-link>
-            <button class="bk-btn bk-btn-ghost bk-btn-sm" @click="openForm(s)">
-              ✏️ Edit
-            </button>
-            <button
-              class="bk-btn bk-btn-danger bk-btn-sm"
-              :disabled="(s.books?.length ?? 0) > 0"
-              :title="(s.books?.length ?? 0) > 0 ? 'Cannot delete: books belong to this series' : 'Delete this series'"
-              @click="confirmDelete(s)"
-            >
-              🗑️ Delete
-            </button>
+            <div style="display: flex; gap: 0.25rem;">
+              <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click.stop.prevent="openForm(s)" title="Edit">
+                ✏️
+              </button>
+              <button
+                class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon"
+                :disabled="(s.books?.length ?? 0) > 0"
+                :title="(s.books?.length ?? 0) > 0 ? 'Cannot delete: books belong to this series' : 'Delete'"
+                @click.stop.prevent="confirmDelete(s)"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
       </div>

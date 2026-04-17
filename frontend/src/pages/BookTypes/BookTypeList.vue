@@ -15,30 +15,29 @@
     <!-- Cards Grid -->
     <div v-if="types.length" class="bk-card-grid">
       <div v-for="type in types" :key="type.id" class="bk-card">
-        <div class="bk-card-body">
-          <router-link :to="`/types/${type.id}/books`" style="text-decoration: none;">
-            <h3 class="bk-card-title" style="cursor: pointer;">{{ type.name }}</h3>
-          </router-link>
-          <p class="bk-card-subtitle">
-            <span :class="['bk-badge', (type.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
-              {{ type.books?.length ?? 0 }} book{{ (type.books?.length ?? 0) === 1 ? '' : 's' }}
-            </span>
-          </p>
-          <div class="bk-card-actions">
-            <router-link :to="`/types/${type.id}/books`" class="bk-btn bk-btn-ghost bk-btn-sm">
-              📖 View Books
+        <div class="bk-card-body" style="padding: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+            <router-link :to="`/types/${type.id}/books`" style="text-decoration: none; flex: 1;">
+              <h3 class="bk-card-title" style="margin: 0; font-size: 1.2rem;">{{ type.name }}</h3>
+              <p class="bk-card-subtitle" style="margin-top: 0.25rem;">
+                <span :class="['bk-badge', (type.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
+                  {{ type.books?.length ?? 0 }} book{{ (type.books?.length ?? 0) === 1 ? '' : 's' }}
+                </span>
+              </p>
             </router-link>
-            <button class="bk-btn bk-btn-ghost bk-btn-sm" @click="openForm(type)">
-              ✏️ Edit
-            </button>
-            <button
-              class="bk-btn bk-btn-danger bk-btn-sm"
-              :disabled="(type.books?.length ?? 0) > 0"
-              :title="(type.books?.length ?? 0) > 0 ? 'Cannot delete: books are assigned' : 'Delete this type'"
-              @click="confirmDelete(type)"
-            >
-              🗑️ Delete
-            </button>
+            <div style="display: flex; gap: 0.25rem;">
+              <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click.stop.prevent="openForm(type)" title="Edit">
+                ✏️
+              </button>
+              <button
+                class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon"
+                :disabled="(type.books?.length ?? 0) > 0"
+                :title="(type.books?.length ?? 0) > 0 ? 'Cannot delete: books are assigned' : 'Delete'"
+                @click.stop.prevent="confirmDelete(type)"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -366,13 +366,13 @@ body {
 }
 
 .bk-btn-ghost {
-  background: transparent;
+  background: var(--bk-surface-alt);
   color: var(--bk-text-muted);
   border: 1px solid var(--bk-border);
 }
 
 .bk-btn-ghost:hover {
-  background: var(--bk-surface-alt);
+  background: var(--bk-surface);
   color: var(--bk-text);
 }
 
@@ -414,7 +414,7 @@ body {
   padding: 0.6rem 0.9rem;
   border: 1px solid var(--bk-border);
   border-radius: var(--bk-radius-sm);
-  background: var(--bk-surface);
+  background: var(--bk-surface-alt);
   color: var(--bk-text);
   font-size: 0.9rem;
   transition: all var(--bk-transition);
