@@ -110,8 +110,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getLendings, updateLending, createLending, deleteLending } from '../../api/lendings'
-import { getBooks } from '../../api/books'
+import { getLendings, updateLending, createLending, deleteLending } from '../../services/LendingsService'
+import { getBooks } from '../../services/BooksService'
 import type { LendingDTO, BookDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'

@@ -138,9 +138,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getBookType } from '../../api/bookTypes'
-import { getBooks, createBook, updateBook, deleteBook } from '../../api/books'
-import { getBookSeries } from '../../api/series'
+import { getBookType } from '../../services/BookTypesService'
+import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
+import { getBookSeries } from '../../services/SeriesService'
 import type { BookDTO, BookSeriesDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
