@@ -26,6 +26,7 @@
       <table class="bk-table">
         <thead>
           <tr>
+            <th style="width: 60px;">Cover</th>
             <th>Title</th>
             <th>Author</th>
             <th>ISBN</th>
@@ -36,6 +37,9 @@
         </thead>
         <tbody>
           <tr v-for="book in filteredBooks" :key="book.id">
+            <td>
+              <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
+            </td>
             <td><strong>{{ book.title }}</strong></td>
             <td>{{ book.author }}</td>
             <td><code style="font-size: 0.8rem;">{{ book.isbn }}</code></td>
@@ -78,30 +82,42 @@
     <!-- Create/Edit Book Modal -->
     <ModalDialog :show="showForm" :title="editingBook ? 'Edit Book' : 'New Book'" @close="closeForm">
       <form @submit.prevent="save">
-        <div class="bk-form-group">
-          <label class="bk-form-label">Title</label>
-          <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
-        </div>
-        <div class="bk-form-group">
-          <label class="bk-form-label">Author</label>
-          <input v-model="form.author" class="bk-form-input" placeholder="Author name" required />
-        </div>
-        <div class="bk-form-group">
-          <label class="bk-form-label">ISBN</label>
-          <input v-model="form.isbn" class="bk-form-input" placeholder="ISBN number" required />
-        </div>
-        <div class="bk-form-group">
-          <label class="bk-form-label">Book Series (Optional)</label>
-          <select v-model="form.bookSeriesId" class="bk-form-select">
-            <option value="">None</option>
-            <option v-for="s in bookSeries" :key="s.id" :value="s.id">{{ s.name }}</option>
-          </select>
-        </div>
-        <div class="bk-form-group">
-          <label class="bk-form-checkbox">
-            <input type="checkbox" v-model="form.color" />
-            <span>Color (uncheck for B&W)</span>
-          </label>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 250px;">
+            <div class="bk-form-group">
+              <label class="bk-form-label">Title</label>
+              <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-label">Author</label>
+              <input v-model="form.author" class="bk-form-input" placeholder="Author name" required />
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-label">ISBN</label>
+              <input v-model="form.isbn" class="bk-form-input" placeholder="ISBN number" required />
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-label">Custom Image URL (Optional)</label>
+              <input v-model="form.imageUrl" class="bk-form-input" placeholder="https://example.com/cover.jpg" />
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-label">Book Series (Optional)</label>
+              <select v-model="form.bookSeriesId" class="bk-form-select">
+                <option value="">None</option>
+                <option v-for="s in bookSeries" :key="s.id" :value="s.id">{{ s.name }}</option>
+              </select>
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-checkbox">
+                <input type="checkbox" v-model="form.color" />
+                <span>Color (uncheck for B&W)</span>
+              </label>
+            </div>
+          </div>
+          <div style="width: 120px;">
+            <label class="bk-form-label">Preview</label>
+            <BookCover :isbn="form.isbn" :customUrl="form.imageUrl" :title="form.title || 'Preview'" size="medium" />
+          </div>
         </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
@@ -146,6 +162,7 @@ import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import LendingModal from '../../components/LendingModal.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
+import BookCover from '../../components/BookCover.vue'
 
 const route = useRoute()
 const typeId = String(route.params.id)
@@ -167,6 +184,7 @@ const form = ref({
   isbn: '',
   bookSeriesId: '' as string,
   color: true,
+  imageUrl: '',
 })
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
@@ -208,10 +226,11 @@ function openForm(book?: BookDTO) {
       isbn: book.isbn,
       bookSeriesId: book.bookSeriesId ?? '',
       color: book.color,
+      imageUrl: book.imageUrl || '',
     }
   } else {
     editingBook.value = null
-    form.value = { title: '', author: '', isbn: '', bookSeriesId: '', color: true }
+    form.value = { title: '', author: '', isbn: '', bookSeriesId: '', color: true, imageUrl: '' }
   }
   showForm.value = true
 }
@@ -229,6 +248,7 @@ function save() {
     bookTypeId: typeId,
     bookSeriesId: form.value.bookSeriesId || undefined,
     color: form.value.color,
+    imageUrl: form.value.imageUrl || undefined,
   }
 
   const op = editingBook.value

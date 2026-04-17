@@ -18,6 +18,7 @@
       <table class="bk-table">
         <thead>
           <tr>
+            <th style="width: 50px;"></th>
             <th>Book</th>
             <th>Borrower</th>
             <th>Lent On</th>
@@ -28,6 +29,9 @@
         </thead>
         <tbody>
           <tr v-for="lending in filteredLendings" :key="lending.id">
+            <td>
+              <BookCover :isbn="lending.book?.isbn" :customUrl="lending.book?.imageUrl" :title="lending.book?.title || 'Book'" size="small" />
+            </td>
             <td><strong>{{ lending.book?.title ?? '—' }}</strong></td>
             <td>{{ lending.name }}</td>
             <td>{{ formatDate(lending.date) }}</td>
@@ -116,6 +120,7 @@ import type { LendingDTO, BookDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
+import BookCover from '../../components/BookCover.vue'
 
 const lendings = ref<LendingDTO[]>([])
 const books = ref<BookDTO[]>([])

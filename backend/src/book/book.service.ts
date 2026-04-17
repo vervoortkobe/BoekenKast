@@ -46,8 +46,9 @@ export class BookService {
         author: book.author,
         isbn: book.isbn,
         color: book.color,
+        imageUrl: book.imageUrl,
         bookType: { connect: { id: book.bookTypeId } },
-        bookSeries: { connect: { id: book.bookSeriesId } },
+        bookSeries: book.bookSeriesId ? { connect: { id: book.bookSeriesId } } : undefined,
       },
       include: { bookType: true, bookSeries: true },
     });
@@ -61,8 +62,9 @@ export class BookService {
         author: book.author,
         isbn: book.isbn,
         color: book.color,
+        imageUrl: book.imageUrl,
         bookType: { connect: { id: book.bookTypeId } },
-        bookSeries: { connect: { id: book.bookSeriesId } },
+        bookSeries: book.bookSeriesId ? { connect: { id: book.bookSeriesId } } : { disconnect: true },
       },
       include: { bookType: true, bookSeries: true },
     });

@@ -6,8 +6,10 @@
           v-for="toast in toasts"
           :key="toast.id"
           :class="['bk-toast', `bk-toast-${toast.type}`]"
+          style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;"
         >
-          {{ toast.message }}
+          <span>{{ toast.message }}</span>
+          <button @click="removeToast(toast.id)" style="background: none; border: none; cursor: pointer; opacity: 0.5; font-size: 1.1rem; line-height: 1;">&times;</button>
         </div>
       </TransitionGroup>
     </div>
@@ -30,8 +32,12 @@ function addToast(message: string, type: 'success' | 'error' = 'success') {
   const id = nextId++
   toasts.value.push({ id, message, type })
   setTimeout(() => {
-    toasts.value = toasts.value.filter((t) => t.id !== id)
-  }, 3000)
+    removeToast(id)
+  }, 5000) // Slightly longer duration for visibility
+}
+
+function removeToast(id: number) {
+  toasts.value = toasts.value.filter((t) => t.id !== id)
 }
 
 defineExpose({ addToast })

@@ -13,5 +13,6 @@ export interface BookDTO {
   bookSeries: BookSeriesDTO;
   bookSeriesId?: string;
   color: boolean;
+  imageUrl?: string;
   lendings?: LendingDTO[];
 }
