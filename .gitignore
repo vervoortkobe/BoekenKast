@@ -58,3 +58,4 @@ backend/prisma/*.db-journal
 
 # Docker
 .dockerignore
+.vscode/
