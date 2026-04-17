@@ -22,8 +22,8 @@
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
-  isbn?: string
-  customUrl?: string
+  isbn?: string | null
+  customUrl?: string | null
   title: string
   size?: 'small' | 'medium'
 }>()

@@ -197,7 +197,7 @@ const filteredBooks = computed(() => {
     (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
       b.author.toLowerCase().includes(q) ||
-      b.isbn.toLowerCase().includes(q)
+      b.isbn?.toLowerCase().includes(q)
   )
 })
 
@@ -224,7 +224,7 @@ function openForm(book?: BookDTO) {
     form.value = {
       title: book.title,
       author: book.author,
-      isbn: book.isbn,
+      isbn: book.isbn || '',
       bookSeriesId: book.bookSeriesId ?? '',
       color: book.color,
       imageUrl: book.imageUrl || '',
