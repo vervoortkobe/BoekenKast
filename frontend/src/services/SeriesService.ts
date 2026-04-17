@@ -1,4 +1,4 @@
-import { httpGet, httpPost, httpPut, httpDelete } from './http'
+import { httpGet, httpPost, httpPut, httpDelete } from './HttpService'
 import type { BookSeriesDTO } from '../types'
 
 export const getBookSeries = () => httpGet('/book-series')

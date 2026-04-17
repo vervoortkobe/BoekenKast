@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ModalDialog from './ModalDialog.vue'
-import { createLending } from '../api/lendings'
+import { createLending } from '../services/LendingsService'
 
 const props = defineProps<{
   show: boolean

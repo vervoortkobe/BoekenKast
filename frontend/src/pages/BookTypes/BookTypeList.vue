@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getBookTypes, createBookType, updateBookType, deleteBookType } from '../../api/bookTypes'
+import { getBookTypes, createBookType, updateBookType, deleteBookType } from '../../services/BookTypesService'
 import type { BookTypeDTO } from '../../types'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'

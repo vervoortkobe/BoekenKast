@@ -1,41 +1,36 @@
-/* ========================================
-   BoekenKast – Custom Styles
-   Uses Halfmoon 2.0 as base framework
-   ======================================== */
-
 :root {
-  --bk-primary: #6c5ce7;
-  --bk-primary-hover: #5a4bd1;
-  --bk-accent: #00cec9;
-  --bk-danger: #e17055;
-  --bk-danger-hover: #d35a3d;
-  --bk-success: #00b894;
-  --bk-warning: #fdcb6e;
-  --bk-surface: #ffffff;
-  --bk-surface-alt: #f8f9fc;
-  --bk-text: #2d3436;
-  --bk-text-muted: #636e72;
-  --bk-border: #e0e4e8;
-  --bk-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --bk-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+  --bk-primary: #2563eb;
+  --bk-primary-hover: #1d4ed8;
+  --bk-accent: #3b82f6;
+  --bk-danger: #ef4444;
+  --bk-danger-hover: #dc2626;
+  --bk-success: #10b981;
+  --bk-warning: #f59e0b;
+  --bk-surface: #e4e4e4;
+  --bk-surface-alt: #ffffff;
+  --bk-text: #1a1e23;
+  --bk-text-muted: #6b7785;
+  --bk-border: #e1e4e8;
+  --bk-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --bk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --bk-radius: 12px;
   --bk-radius-sm: 8px;
   --bk-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-bs-theme="dark"] {
-  --bk-primary: #a29bfe;
-  --bk-primary-hover: #8b82f0;
-  --bk-accent: #81ecec;
-  --bk-danger: #fab1a0;
-  --bk-danger-hover: #e88f7d;
-  --bk-success: #55efc4;
-  --bk-warning: #ffeaa7;
-  --bk-surface: #1e1e2e;
-  --bk-surface-alt: #282840;
-  --bk-text: #e8e8f0;
-  --bk-text-muted: #a0a0b8;
-  --bk-border: #3a3a5c;
+  --bk-primary: #3b82f6;
+  --bk-primary-hover: #60a5fa;
+  --bk-accent: #2563eb;
+  --bk-danger: #f87171;
+  --bk-danger-hover: #ef4444;
+  --bk-success: #34d399;
+  --bk-warning: #fbbf24;
+  --bk-surface: #1e293b;
+  --bk-surface-alt: #0f172a;
+  --bk-text: #f1f5f9;
+  --bk-text-muted: #94a3b8;
+  --bk-border: #334155;
   --bk-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
   --bk-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
@@ -95,21 +90,23 @@ body {
 .bk-nav-link {
   padding: 0.5rem 1rem;
   border-radius: var(--bk-radius-sm);
-  color: var(--bk-text-muted);
+  color: var(--bk-text);
+  /* Darker text in light mode */
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  /* Bolder */
   font-size: 0.9rem;
   transition: all var(--bk-transition);
 }
 
 .bk-nav-link:hover {
   color: var(--bk-primary);
-  background: rgba(108, 92, 231, 0.08);
+  background: rgba(37, 99, 235, 0.1);
 }
 
 .bk-nav-link.router-link-active {
   color: var(--bk-primary);
-  background: rgba(108, 92, 231, 0.12);
+  background: rgba(37, 99, 235, 0.15);
 }
 
 .bk-theme-toggle {
@@ -117,7 +114,8 @@ body {
   height: 40px;
   border-radius: 50%;
   border: 1px solid var(--bk-border);
-  background: var(--bk-surface-alt);
+  background: var(--bk-surface);
+  /* Matches card/navbar background */
   color: var(--bk-text);
   cursor: pointer;
   display: flex;
@@ -126,13 +124,15 @@ body {
   transition: all var(--bk-transition);
   font-size: 1.1rem;
   margin-left: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .bk-theme-toggle:hover {
-  background: var(--bk-primary);
-  color: white;
+  background: #f8fafc;
+  color: var(--bk-primary);
   border-color: var(--bk-primary);
   transform: rotate(15deg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* ---- Content ---- */
@@ -203,7 +203,7 @@ body {
 
 .bk-search-bar input:focus {
   border-color: var(--bk-primary);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
 }
 
 .bk-search-bar input::placeholder {
@@ -306,7 +306,7 @@ body {
 }
 
 .bk-table tr:hover td {
-  background: rgba(108, 92, 231, 0.03);
+  background: rgba(13, 110, 253, 0.03);
 }
 
 .bk-table .bk-actions-cell {
@@ -342,7 +342,7 @@ body {
 
 .bk-btn-primary:hover {
   background: var(--bk-primary-hover);
-  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
 .bk-btn-accent {
@@ -424,7 +424,7 @@ body {
 .bk-form-input:focus,
 .bk-form-select:focus {
   border-color: var(--bk-primary);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
 }
 
 .bk-form-checkbox {
@@ -525,23 +525,23 @@ body {
 }
 
 .bk-badge-primary {
-  background: rgba(108, 92, 231, 0.12);
+  background: rgba(13, 110, 253, 0.12);
   color: var(--bk-primary);
 }
 
 .bk-badge-success {
-  background: rgba(0, 184, 148, 0.12);
-  color: var(--bk-success);
+  background: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
 }
 
 .bk-badge-warning {
-  background: rgba(253, 203, 110, 0.2);
-  color: #e17055;
+  background: rgba(241, 196, 15, 0.15);
+  color: #d4a017;
 }
 
 .bk-badge-danger {
-  background: rgba(225, 112, 85, 0.12);
-  color: var(--bk-danger);
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
 }
 
 /* ---- Empty state ---- */
@@ -601,8 +601,13 @@ body {
 
 /* ---- Animations ---- */
 @keyframes bk-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes bk-slide-up {
@@ -610,6 +615,7 @@ body {
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -617,8 +623,15 @@ body {
 }
 
 @keyframes bk-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* ---- Responsive ---- */

@@ -10,14 +10,16 @@ export class BookSeriesService {
     sortBy: string = 'name',
     sortOrder: 'asc' | 'desc' = 'asc',
   ) {
-    const skip = (page - 1) * limit;
+    const parsedPage = Number(page) || 1;
+    const parsedLimit = Number(limit) || 10;
+    const skip = (parsedPage - 1) * parsedLimit;
     const orderBy = { [sortBy]: sortOrder };
 
     return prisma.bookSeries.findMany({
       include: { books: true },
       orderBy,
       skip,
-      take: limit,
+      take: parsedLimit,
     });
   }
 
@@ -29,11 +31,11 @@ export class BookSeriesService {
   }
 
   async createBookSeries(bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.create({ data: bookSeries });
+    return prisma.bookSeries.create({ data: { name: bookSeries.name } });
   }
 
   async updateBookSeries(id: string, bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.update({ where: { id }, data: bookSeries });
+    return prisma.bookSeries.update({ where: { id }, data: { name: bookSeries.name } });
   }
 
   async deleteBookSeries(id: string) {

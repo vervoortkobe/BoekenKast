@@ -1,11 +1,11 @@
-import { httpGet, httpPost, httpPut, httpDelete } from './http'
+import { httpGet, httpPost, httpPut, httpDelete } from './HttpService'
 import type { BookDTO } from '../types'
 
 export const getBooks = (params?: Record<string, any>) => {
   const query = params
     ? '?' + new URLSearchParams(
-        Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '').map(([k, v]) => [k, String(v)])
-      ).toString()
+      Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '').map(([k, v]) => [k, String(v)])
+    ).toString()
     : ''
   return httpGet(`/books${query}`)
 }

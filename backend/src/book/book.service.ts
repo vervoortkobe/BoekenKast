@@ -13,7 +13,9 @@ export class BookService {
     seriesId?: string,
     author?: string,
   ) {
-    const skip = (page - 1) * limit;
+    const parsedPage = Number(page) || 1;
+    const parsedLimit = Number(limit) || 10;
+    const skip = (parsedPage - 1) * parsedLimit;
     const orderBy = { [sortBy]: sortOrder };
 
     const where: any = {};
@@ -26,7 +28,7 @@ export class BookService {
       include: { bookType: true, bookSeries: true, lendings: true },
       orderBy,
       skip,
-      take: limit,
+      take: parsedLimit,
     });
   }
 
