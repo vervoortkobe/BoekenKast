@@ -7,6 +7,7 @@
   --bk-success: #10b981;
   --bk-warning: #f59e0b;
   --bk-surface: #e4e4e4;
+  --bk-surface-rgb: 228, 228, 228;
   --bk-surface-alt: #ffffff;
   --bk-text: #1a1e23;
   --bk-text-muted: #6b7785;
@@ -27,6 +28,7 @@
   --bk-success: #34d399;
   --bk-warning: #fbbf24;
   --bk-surface: #1e293b;
+  --bk-surface-rgb: 30, 41, 59;
   --bk-surface-alt: #0f172a;
   --bk-text: #f1f5f9;
   --bk-text-muted: #94a3b8;
@@ -62,14 +64,27 @@ body {
 }
 
 .bk-navbar-brand {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--bk-primary);
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  letter-spacing: -0.02em;
+  gap: 0.6rem;
+  transition: opacity var(--bk-transition);
+}
+
+.bk-navbar-brand svg {
+  width: 28px;
+  height: 28px;
+  color: var(--bk-primary);
+}
+
+.bk-logo-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(to top right, var(--bk-primary), #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .bk-navbar-brand:hover {
@@ -93,10 +108,22 @@ body {
   color: var(--bk-text);
   /* Darker text in light mode */
   text-decoration: none;
-  font-weight: 600;
-  /* Bolder */
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   transition: all var(--bk-transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bk-nav-link svg {
+  opacity: 0.6;
+  transition: all var(--bk-transition);
+}
+
+.bk-nav-link:hover svg,
+.bk-nav-link.router-link-active svg {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 .bk-nav-link:hover {
