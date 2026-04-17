@@ -6,8 +6,12 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue(), vueJsx(), vueDevTools()],
+export default defineConfig(({ command }) => ({
+  plugins: [
+    vue(),
+    vueJsx(),
+    command === 'serve' ? vueDevTools() : undefined,
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -16,4 +20,7 @@ export default defineConfig({
   server: {
     allowedHosts: ['0.0.0.0'],
   },
-})
+  define: {
+    __VUE_PROD_DEVTOOLS__: false,
+  },
+}))
