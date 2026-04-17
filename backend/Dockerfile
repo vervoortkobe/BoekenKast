@@ -7,10 +7,11 @@ RUN bun install
 
 COPY . .
 
-# RUN bun prisma generate
+ENV DATABASE_URL="file:./dev.db"
+RUN bun prisma generate
+
 RUN bun run build
 
 EXPOSE 3000
 
-# CMD ["bun", "prisma", "migrate", "deploy"]
-CMD ["bun", "run", "start:prod"]
+CMD ["sh", "-c", "bun prisma migrate deploy && bun run start:prod"]
