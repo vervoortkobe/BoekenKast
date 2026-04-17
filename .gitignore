@@ -49,10 +49,6 @@ Thumbs.db
 **/cypress/screenshots/
 **/__screenshots__/
 
-# Databases
-backend/prisma/*.db
-backend/prisma/*.db-journal
-
 # Vite
 *.timestamp-*-*.mjs
 
