@@ -2,14 +2,18 @@
   <div>
     <div class="bk-page-header">
       <div>
-        <h1 class="bk-page-title">📚 Book Types</h1>
+        <h1 class="bk-page-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.5rem;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Book Types
+        </h1>
         <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">
           Manage your book categories
         </p>
       </div>
-      <button class="bk-btn bk-btn-primary" @click="openForm()">
-        ＋ New Type
-      </button>
+        <button class="bk-btn bk-btn-primary" @click="openForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Type
+        </button>
     </div>
 
     <!-- Cards Grid -->
@@ -63,7 +67,9 @@
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
-            {{ editingType ? '✓ Update' : '＋ Create' }}
+            <svg v-if="editingType" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {{ editingType ? 'Update' : 'Create' }}
           </button>
         </div>
       </form>
@@ -74,7 +80,10 @@
       <p>Are you sure you want to delete <strong>{{ deletingType?.name }}</strong>?</p>
       <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
         <button class="bk-btn bk-btn-ghost" @click="showDelete = false">Cancel</button>
-        <button class="bk-btn bk-btn-danger" @click="remove()">🗑️ Delete</button>
+        <button class="bk-btn bk-btn-danger" @click="remove()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete
+        </button>
       </div>
     </ModalDialog>
 

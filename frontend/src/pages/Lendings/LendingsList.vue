@@ -2,14 +2,20 @@
   <div>
     <div class="bk-page-header">
       <div>
-        <h1 class="bk-page-title">📤 Lendings</h1>
+        <h1 class="bk-page-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.5rem;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+          Lendings
+        </h1>
         <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">
           Track all book lendings
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <SearchBar v-model="search" placeholder="Search by borrower or book..." />
-        <button class="bk-btn bk-btn-primary" @click="openForm()">＋ Add Lending</button>
+        <button class="bk-btn bk-btn-primary" @click="openForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Lending
+        </button>
       </div>
     </div>
 
@@ -59,12 +65,17 @@
     <!-- Empty State -->
     <div v-else class="bk-card">
       <div class="bk-empty">
-        <div class="bk-empty-icon">📋</div>
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
         <div class="bk-empty-title">{{ search ? 'No lendings match your search' : 'No lendings yet' }}</div>
         <p class="bk-empty-text">
           {{ search ? 'Try adjusting your search terms.' : 'Lend a book from a series page to see it here.' }}
         </p>
-        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">＋ Add Lending</button>
+        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Lending
+        </button>
       </div>
     </div>
 
@@ -93,7 +104,9 @@
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
-            {{ editingLending ? '✓ Update' : '＋ Create' }}
+            <svg v-if="editingLending" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {{ editingLending ? 'Update' : 'Create' }}
           </button>
         </div>
       </form>
@@ -104,7 +117,10 @@
       <p>Are you sure you want to delete this lending record for <strong>{{ deletingLending?.book?.title }}</strong>?</p>
       <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
         <button class="bk-btn bk-btn-ghost" @click="showDelete = false">Cancel</button>
-        <button class="bk-btn bk-btn-danger" @click="remove()">🗑️ Delete</button>
+        <button class="bk-btn bk-btn-danger" @click="remove()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete
+        </button>
       </div>
     </ModalDialog>
 

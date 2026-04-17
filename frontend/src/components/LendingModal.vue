@@ -37,7 +37,10 @@
 
       <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
         <button type="button" class="bk-btn bk-btn-ghost" @click="$emit('close')">Cancel</button>
-        <button type="submit" class="bk-btn bk-btn-primary">✓ Create Lending</button>
+        <button type="submit" class="bk-btn bk-btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Create Lending
+        </button>
       </div>
     </form>
   </ModalDialog>
