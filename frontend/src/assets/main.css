@@ -522,6 +522,25 @@ body {
   transition: all var(--bk-transition);
 }
 
+.bk-theme-toggle svg {
+  fill: transparent;
+  transition: all var(--bk-transition);
+}
+
+.bk-theme-toggle:hover {
+  background: var(--bk-border);
+}
+
+[data-bs-theme="dark"] .bk-theme-toggle:hover {
+  background: var(--bk-surface-alt);
+}
+
+.bk-theme-toggle:hover svg {
+  fill: #fbbf24;
+  stroke: #fbbf24;
+  transform: scale(1.1);
+}
+
 .bk-modal-close:hover {
   background: var(--bk-surface-alt);
   color: var(--bk-text);
@@ -581,7 +600,41 @@ body {
 .bk-empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  opacity: 0.4;
+  opacity: 0.3;
+}
+
+/* ---- Decorative Waves ---- */
+.bk-waves {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 12vh;
+  min-height: 80px;
+  max-height: 160px;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.waves {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.parallax > use {
+  animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+}
+.parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
+.parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+.parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+.parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+@keyframes move-forever {
+  0% { transform: translate3d(-90px,0,0); }
+  100% { transform: translate3d(85px,0,0); }
 }
 
 .bk-empty-title {
