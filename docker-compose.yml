@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: boekenkast-backend
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./backend/prisma:/app/prisma
+    env_file: ./backend/.env
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: boekenkast-frontend
+    ports:
+      - "5173:5173"
+    env_file: ./frontend/.env
+    environment:
+      - VITE_API_URL=http://localhost:3002
+    depends_on:
+      - backend
+    restart: unless-stopped
