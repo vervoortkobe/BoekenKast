@@ -43,11 +43,12 @@
             </td>
             <td><strong>{{ book.title }}</strong></td>
             <td>{{ book.author }}</td>
-            <td><code style="font-size: 0.8rem;">{{ book.isbn }}</code></td>
+            <td><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
             <td>{{ book.bookType?.name ?? '—' }}</td>
-            <td>
-              <span :class="['bk-badge', book.color ? 'bk-badge-primary' : 'bk-badge-warning']">
-                {{ book.color ? 'Color' : 'B&W' }}
+            <td style="text-align: center;">
+              <span :title="book.color ? 'Color' : 'Black & White'" :style="{ color: book.color ? '#10b981' : '#ef4444' }">
+                <svg v-if="book.color" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </span>
             </td>
             <td>
@@ -57,14 +58,14 @@
             </td>
             <td>
               <div class="bk-actions-cell">
-                <button class="bk-btn bk-btn-accent bk-btn-sm" @click="openLending(book)">
-                  📤 Lend
+                <button class="bk-btn bk-btn-accent bk-btn-sm bk-btn-icon" @click="openLending(book)" title="Lend">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
                 </button>
-                <button class="bk-btn bk-btn-ghost bk-btn-sm" @click="openForm(book)">
-                  ✏️ Edit
+                <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click="openForm(book)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 </button>
-                <button class="bk-btn bk-btn-danger bk-btn-sm" @click="confirmDelete(book)">
-                  🗑️
+                <button class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon" @click="confirmDelete(book)" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                 </button>
               </div>
             </td>
@@ -99,8 +100,8 @@
               <input v-model="form.author" class="bk-form-input" placeholder="Author name" required />
             </div>
             <div class="bk-form-group">
-              <label class="bk-form-label">ISBN</label>
-              <input v-model="form.isbn" class="bk-form-input" placeholder="ISBN number" required />
+              <label class="bk-form-label">ISBN (Optional)</label>
+              <input v-model="form.isbn" class="bk-form-input" placeholder="ISBN number" />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Custom Image URL (Optional)</label>

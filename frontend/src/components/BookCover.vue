@@ -1,7 +1,7 @@
 <template>
   <div class="book-cover-container" :style="{ width: size === 'small' ? '40px' : '100px', height: size === 'small' ? '60px' : '150px' }">
     <img 
-      v-if="!failed"
+      v-if="computedSrc && !failed"
       :src="computedSrc" 
       @error="handleError"
       @load="handleLoad"
@@ -10,7 +10,7 @@
       :alt="title"
     />
     <div v-else class="book-cover-placeholder">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
       </svg>

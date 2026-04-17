@@ -23,7 +23,7 @@ export interface BookDTO {
   id?: string;
   title: string;
   author: string;
-  isbn: string;
+  isbn?: string | null;
   bookType?: BookTypeDTO;
   bookTypeId?: string;
   bookSeries?: BookSeriesDTO;

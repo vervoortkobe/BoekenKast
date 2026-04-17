@@ -9,7 +9,9 @@
           style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;"
         >
           <span>{{ toast.message }}</span>
-          <button @click="removeToast(toast.id)" style="background: none; border: none; cursor: pointer; opacity: 0.5; font-size: 1.1rem; line-height: 1;">&times;</button>
+          <button @click="removeToast(toast.id)" style="background: none; border: none; cursor: pointer; opacity: 0.5; display: flex; align-items: center; justify-content: center; color: currentColor;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
       </TransitionGroup>
     </div>

@@ -31,7 +31,7 @@ model Book {
   id           String      @id @default(cuid())
   title        String
   author       String
-  isbn         String
+  isbn         String?
   bookType     BookType    @relation(fields: [bookTypeId], references: [id])
   bookTypeId   String
   bookSeries   BookSeries? @relation(fields: [bookSeriesId], references: [id])
