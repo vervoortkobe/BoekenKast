@@ -15,12 +15,17 @@ export class BookTypeService {
     const skip = (parsedPage - 1) * parsedLimit;
     const orderBy = { [sortBy]: sortOrder };
 
-    return prisma.bookType.findMany({
-      include: { books: true },
-      orderBy,
-      skip,
-      take: parsedLimit,
-    });
+    const [data, total] = await Promise.all([
+      prisma.bookType.findMany({
+        include: { books: true },
+        orderBy,
+        skip,
+        take: parsedLimit,
+      }),
+      prisma.bookType.count(),
+    ]);
+
+    return { data, total };
   }
 
   async getBookType(id: string) {

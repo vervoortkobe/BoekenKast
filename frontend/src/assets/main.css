@@ -320,6 +320,32 @@ body {
   border-bottom: 1px solid var(--bk-border);
 }
 
+.bk-table th.bk-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--bk-transition);
+}
+
+.bk-table th.bk-sortable:hover {
+  background: var(--bk-surface);
+  color: var(--bk-primary);
+}
+
+.bk-table .bk-sort-icon {
+  margin-left: 0.4rem;
+  opacity: 0.3;
+  transition: opacity var(--bk-transition);
+}
+
+.bk-table th.bk-sortable:hover .bk-sort-icon,
+.bk-table th.bk-sort-active .bk-sort-icon {
+  opacity: 1;
+}
+
+.bk-table th.bk-sort-active {
+  color: var(--bk-primary);
+}
+
 .bk-table td {
   padding: 0.85rem 1.25rem;
   border-bottom: 1px solid var(--bk-border);

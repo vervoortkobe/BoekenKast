@@ -23,12 +23,18 @@
     </div>
 
     <!-- Books Table -->
-    <div v-if="filteredBooks.length" class="bk-table-wrapper">
+    <div v-if="books.length" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
             <th style="width: 60px;">Cover</th>
-            <th>Title</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'title' }" @click="toggleSort('title')">
+              Title
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'title' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th>Author</th>
             <th>ISBN</th>
             <th>Color</th>
@@ -69,20 +75,39 @@
       </table>
     </div>
 
+    <!-- Pagination -->
+    <Pagination 
+      v-if="books.length"
+      v-model="page" 
+      :total-items="total" 
+      :items-per-page="limit" 
+      @update:model-value="load"
+    />
+
     <!-- Empty State -->
-    <div v-else class="bk-card">
+    <div v-if="!books.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
         </div>
         <div class="bk-empty-title">No books found</div>
         <p class="bk-empty-text">
-          {{ search ? 'Try adjusting your search.' : 'No books are assigned to this type yet.' }}
+          No books are assigned to this type yet.
         </p>
-        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">
+        <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           Add Book
         </button>
+      </div>
+    </div>
+    
+    <div v-else-if="!filteredBooks.length && search" class="bk-card">
+      <div class="bk-empty">
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <div class="bk-empty-title">No results for "{{ search }}"</div>
+        <p class="bk-empty-text">Try adjusting your search terms.</p>
       </div>
     </div>
 
@@ -164,7 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBookType } from '../../services/BookTypesService'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
@@ -175,6 +200,7 @@ import ModalDialog from '../../components/ModalDialog.vue'
 import LendingModal from '../../components/LendingModal.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import BookCover from '../../components/BookCover.vue'
+import Pagination from '../../components/Pagination.vue'
 
 const route = useRoute()
 const typeId = String(route.params.id)
@@ -182,6 +208,13 @@ const typeName = ref('Loading...')
 const books = ref<BookDTO[]>([])
 const bookSeries = ref<BookSeriesDTO[]>([])
 const search = ref('')
+
+// Pagination & Sorting state
+const page = ref(1)
+const limit = ref(10)
+const total = ref(0)
+const sortBy = ref('title')
+const sortOrder = ref<'asc' | 'desc'>('asc')
 
 const showForm = ref(false)
 const showDelete = ref(false)
@@ -212,6 +245,16 @@ const filteredBooks = computed(() => {
   )
 })
 
+function toggleSort(field: string) {
+  if (sortBy.value === field) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortBy.value = field
+    sortOrder.value = 'asc'
+  }
+  load()
+}
+
 function load() {
   getBookType(typeId).subscribe({
     next: (data: any) => {
@@ -219,15 +262,28 @@ function load() {
     },
     error: (err: any) => console.error(err),
   })
-  getBooks({ typeId }).subscribe({
-    next: (data: BookDTO[]) => (books.value = data),
+  getBooks({ 
+    typeId, 
+    page: page.value, 
+    limit: limit.value, 
+    sortBy: sortBy.value, 
+    sortOrder: sortOrder.value 
+  }).subscribe({
+    next: (res: any) => {
+      books.value = res.data
+      total.value = res.total
+    },
     error: (err: any) => console.error(err),
   })
-  getBookSeries().subscribe({
-    next: (data: BookSeriesDTO[]) => (bookSeries.value = data),
+  getBookSeries({ limit: 1000 }).subscribe({
+    next: (res: any) => (bookSeries.value = res.data),
     error: (err: any) => console.error(err),
   })
 }
+
+// Reset page when searching
+watch(search, () => {
+})
 
 function openForm(book?: BookDTO) {
   if (book) {

@@ -23,13 +23,18 @@ export class BookService {
     if (seriesId) where.bookSeriesId = seriesId;
     if (author) where.author = { contains: author, mode: 'insensitive' };
 
-    return prisma.book.findMany({
-      where,
-      include: { bookType: true, bookSeries: true, lendings: true },
-      orderBy,
-      skip,
-      take: parsedLimit,
-    });
+    const [data, total] = await Promise.all([
+      prisma.book.findMany({
+        where,
+        include: { bookType: true, bookSeries: true, lendings: true },
+        orderBy,
+        skip,
+        take: parsedLimit,
+      }),
+      prisma.book.count({ where }),
+    ]);
+
+    return { data, total };
   }
 
   async getBook(id: string) {

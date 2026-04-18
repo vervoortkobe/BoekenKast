@@ -47,13 +47,27 @@
       </div>
     </div>
 
+    <!-- Pagination -->
+    <Pagination 
+      v-if="types.length"
+      v-model="page" 
+      :total-items="total" 
+      :items-per-page="limit" 
+      @update:model-value="load"
+    />
+
     <!-- Empty State -->
-    <div v-else class="bk-card">
+    <div v-if="!types.length" class="bk-card">
       <div class="bk-empty">
-        <div class="bk-empty-icon">📂</div>
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </div>
         <div class="bk-empty-title">No book types yet</div>
         <p class="bk-empty-text">Create your first book type to start organizing your library.</p>
-        <button class="bk-btn bk-btn-primary" @click="openForm()">＋ Create Type</button>
+        <button class="bk-btn bk-btn-primary" @click="openForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Create Type
+        </button>
       </div>
     </div>
 
@@ -97,6 +111,7 @@ import { getBookTypes, createBookType, updateBookType, deleteBookType } from '..
 import type { BookTypeDTO } from '../../types'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
+import Pagination from '../../components/Pagination.vue'
 
 const types = ref<BookTypeDTO[]>([])
 const showForm = ref(false)
@@ -104,11 +119,20 @@ const showDelete = ref(false)
 const editingType = ref<BookTypeDTO | null>(null)
 const deletingType = ref<BookTypeDTO | null>(null)
 const form = ref({ name: '' })
+
+// Pagination state
+const page = ref(1)
+const limit = ref(12)
+const total = ref(0)
+
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 function load() {
-  getBookTypes().subscribe({
-    next: (data: BookTypeDTO[]) => (types.value = data),
+  getBookTypes({ page: page.value, limit: limit.value }).subscribe({
+    next: (res: any) => {
+      types.value = res.data
+      total.value = res.total
+    },
     error: (err: any) => console.error(err),
   })
 }

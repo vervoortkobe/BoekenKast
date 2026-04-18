@@ -20,7 +20,7 @@
     </div>
 
     <!-- Cards Grid -->
-    <div v-if="filteredSeries.length" class="bk-card-grid">
+    <div v-if="series.length" class="bk-card-grid">
       <div v-for="s in filteredSeries" :key="s.id" class="bk-card">
         <div class="bk-card-body" style="padding: 1rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
@@ -50,20 +50,39 @@
       </div>
     </div>
 
+    <!-- Pagination -->
+    <Pagination 
+      v-if="series.length"
+      v-model="page" 
+      :total-items="total" 
+      :items-per-page="limit" 
+      @update:model-value="load"
+    />
+
     <!-- Empty State -->
-    <div v-else class="bk-card">
+    <div v-if="!series.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
         </div>
-        <div class="bk-empty-title">{{ search ? 'No series match your search' : 'No series yet' }}</div>
+        <div class="bk-empty-title">No series yet</div>
         <p class="bk-empty-text">
-          {{ search ? 'Try adjusting your search terms.' : 'Create your first series to start organizing books.' }}
+          Create your first series to start organizing books.
         </p>
-        <button v-if="!search" class="bk-btn bk-btn-primary" @click="openForm()">
+        <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           Create Series
         </button>
+      </div>
+    </div>
+
+    <div v-else-if="!filteredSeries.length && search" class="bk-card">
+      <div class="bk-empty">
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <div class="bk-empty-title">No results for "{{ search }}"</div>
+        <p class="bk-empty-text">Try adjusting your search terms.</p>
       </div>
     </div>
 
@@ -108,6 +127,7 @@ import type { BookSeriesDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
+import Pagination from '../../components/Pagination.vue'
 
 const series = ref<BookSeriesDTO[]>([])
 const showForm = ref(false)
@@ -116,6 +136,12 @@ const editingSeries = ref<BookSeriesDTO | null>(null)
 const deletingSeries = ref<BookSeriesDTO | null>(null)
 const form = ref({ name: '' })
 const search = ref('')
+
+// Pagination state
+const page = ref(1)
+const limit = ref(12)
+const total = ref(0)
+
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 const filteredSeries = computed(() => {
@@ -125,8 +151,11 @@ const filteredSeries = computed(() => {
 })
 
 function load() {
-  getBookSeries().subscribe({
-    next: (data: BookSeriesDTO[]) => (series.value = data),
+  getBookSeries({ page: page.value, limit: limit.value }).subscribe({
+    next: (res: any) => {
+      series.value = res.data
+      total.value = res.total
+    },
     error: (err: any) => console.error(err),
   })
 }

@@ -18,13 +18,18 @@ export class LendingService {
 
     const where = bookId ? { bookId } : {};
 
-    return prisma.lending.findMany({
-      where,
-      include: { book: true },
-      orderBy,
-      skip,
-      take: parsedLimit,
-    });
+    const [data, total] = await Promise.all([
+      prisma.lending.findMany({
+        where,
+        include: { book: true },
+        orderBy,
+        skip,
+        take: parsedLimit,
+      }),
+      prisma.lending.count({ where }),
+    ]);
+
+    return { data, total };
   }
 
   getLending(id: string) {
