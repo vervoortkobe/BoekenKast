@@ -253,6 +253,28 @@ body {
   pointer-events: none;
 }
 
+.bk-search-clear {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bk-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--bk-transition);
+}
+
+.bk-search-clear:hover {
+  background: var(--bk-border);
+  color: var(--bk-danger);
+}
+
 /* ---- Cards ---- */
 .bk-card {
   background: var(--bk-surface);
@@ -386,6 +408,7 @@ body {
   border: none;
   cursor: pointer;
   text-decoration: none;
+  justify-content: center;
   transition: all var(--bk-transition);
   white-space: nowrap;
 }
@@ -768,6 +791,8 @@ body {
 .bk-pagination-pages {
   display: flex;
   gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---- Animations ---- */
@@ -848,76 +873,75 @@ body {
   }
 
   .bk-table-wrapper {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    overflow: visible;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    /* Subtle hint that there's more to scroll */
+    background: linear-gradient(to right, var(--bk-surface) 30%, rgba(var(--bk-surface-rgb), 0)),
+                linear-gradient(to right, rgba(var(--bk-surface-rgb), 0), var(--bk-surface) 70%) 100% 0,
+                radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
+                radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
   }
 
-  .bk-table,
-  .bk-table thead,
-  .bk-table tbody,
-  .bk-table th,
-  .bk-table td,
-  .bk-table tr {
-    display: block;
+  .bk-table {
+    min-width: 700px; /* Force scroll on small screens */
+    display: table;
+  }
+
+  .bk-table thead {
+    display: table-header-group;
   }
 
   .bk-table thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+    position: static;
+  }
+
+  .bk-table tbody {
+    display: table-row-group;
   }
 
   .bk-table tr {
-    background: var(--bk-surface);
-    border: 1px solid var(--bk-border);
-    border-radius: var(--bk-radius);
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    box-shadow: var(--bk-shadow);
+    display: table-row;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 0;
+    box-shadow: none;
   }
 
   .bk-table td {
-    border: none;
-    border-bottom: 1px solid rgba(var(--bk-surface-rgb), 0.1);
-    position: relative;
-    padding-left: 45%;
-    text-align: right;
-    min-height: 2.5rem;
-    display: flex;
+    display: table-cell;
+    border-bottom: 1px solid var(--bk-border);
+    position: static;
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+    min-height: 0;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .bk-table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 1rem;
-    width: 40%;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-align: left;
-    font-weight: 600;
-    color: var(--bk-text-muted);
-    font-size: 0.75rem;
-    text-transform: uppercase;
+    display: none;
   }
 
   .bk-table td:last-child {
-    border-bottom: none;
-    justify-content: center;
-    padding-left: 1rem;
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--bk-border);
+    border-bottom: 1px solid var(--bk-border);
+    justify-content: flex-start;
+    padding-left: 1.25rem;
+    margin-top: 0;
+    padding-top: 0.85rem;
+    border-top: none;
   }
 
   .bk-table .bk-actions-cell {
-    width: 100%;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 0.25rem 0;
+    width: auto;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0;
   }
 
   .bk-actions-cell .bk-btn svg {

@@ -43,10 +43,11 @@ model Book {
 
 // uitgeleend: aan wie, wanneer, teruggebracht wanneer?
 model Lending {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   name       String
-  date       DateTime @default(now())
-  returnDate DateTime @default(now())
-  book       Book     @relation(fields: [bookId], references: [id])
+  date       DateTime  @default(now())
+  returnDate DateTime  @default(now())
+  returnedAt DateTime?
+  book       Book      @relation(fields: [bookId], references: [id])
   bookId     String
 }

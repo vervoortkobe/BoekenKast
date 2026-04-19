@@ -14,7 +14,10 @@ export class LendingService {
     const parsedPage = Number(page) || 1;
     const parsedLimit = Number(limit) || 10;
     const skip = (parsedPage - 1) * parsedLimit;
-    const orderBy = { [sortBy]: sortOrder };
+    let orderBy: any = { [sortBy]: sortOrder };
+    if (sortBy === 'bookTitle') {
+      orderBy = { book: { title: sortOrder } };
+    }
 
     const where = bookId ? { bookId } : {};
 
@@ -42,6 +45,7 @@ export class LendingService {
         name: lending.name,
         date: lending.date,
         returnDate: lending.returnDate,
+        returnedAt: lending.returnedAt ? new Date(lending.returnedAt) : null,
         bookId: lending.bookId as string,
       },
     });
@@ -54,6 +58,7 @@ export class LendingService {
         name: lending.name,
         date: lending.date,
         returnDate: lending.returnDate,
+        returnedAt: lending.returnedAt ? new Date(lending.returnedAt) : (lending.returnedAt === null ? null : undefined),
         bookId: lending.bookId as string,
       },
     });

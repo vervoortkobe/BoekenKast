@@ -20,12 +20,32 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { onUnmounted, watch } from 'vue'
+
+const props = defineProps<{
   show: boolean
   title: string
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   close: []
 }>()
+
+const handleEsc = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && props.show) {
+    emit('close')
+  }
+}
+
+watch(() => props.show, (isVisible) => {
+  if (isVisible) {
+    document.addEventListener('keydown', handleEsc)
+  } else {
+    document.removeEventListener('keydown', handleEsc)
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEsc)
+})
 </script>

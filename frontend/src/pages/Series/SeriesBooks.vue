@@ -10,14 +10,14 @@
       <div>
         <h1 class="bk-page-title">{{ seriesName }}</h1>
         <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">
-          Books in this series
+          {{ total }} books in this series
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <SearchBar v-model="search" placeholder="Search books..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add Book
+          Add {{ seriesName }}
         </button>
       </div>
     </div>
@@ -48,7 +48,11 @@
             <td data-label="Cover">
               <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
             </td>
-            <td data-label="Title"><strong>{{ book.title }}</strong></td>
+            <td data-label="Title">
+              <a href="#" @click.prevent="openForm(book)" style="text-decoration: none; color: inherit; font-weight: 700;">
+                {{ book.title }}
+              </a>
+            </td>
             <td data-label="Author">{{ book.author }}</td>
             <td data-label="ISBN"><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
             <td data-label="Type">{{ book.bookType?.name ?? '—' }}</td>
@@ -100,7 +104,7 @@
         <p class="bk-empty-text">Add your first book to this series.</p>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add Book
+          Add {{ seriesName }}
         </button>
       </div>
     </div>
@@ -192,7 +196,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBookSeriesById } from '../../services/SeriesService'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
@@ -236,6 +240,12 @@ const form = ref({
 })
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
+
+// Reset page when searching
+watch(search, () => {
+  page.value = 1
+  load()
+})
 
 const filteredBooks = computed(() => {
   if (!search.value) return books.value

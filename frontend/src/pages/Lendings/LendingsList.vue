@@ -7,7 +7,7 @@
           Lendings
         </h1>
         <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">
-          Track all book lendings
+          {{ total }} lendings in total
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
@@ -24,15 +24,21 @@
       <table class="bk-table">
         <thead>
           <tr>
-            <th style="width: 50px;"></th>
+            <th style="width: 60px;">Cover</th>
             <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'bookTitle' }" @click="toggleSort('bookTitle')">
-              Book
+              Title
               <span class="bk-sort-icon">
                 <svg v-if="sortBy === 'bookTitle' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </span>
             </th>
-            <th>Borrower</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'name' }" @click="toggleSort('name')">
+              Borrower
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'name' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'date' }" @click="toggleSort('date')">
               Lent On
               <span class="bk-sort-icon">
@@ -40,8 +46,20 @@
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </span>
             </th>
-            <th>Return Date</th>
-            <th>Status</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'returnDate' }" @click="toggleSort('returnDate')">
+              Return Date
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'returnDate' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'returnedAt' }" @click="toggleSort('returnedAt')">
+              Status
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'returnedAt' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -50,17 +68,30 @@
             <td data-label="Cover">
               <BookCover :isbn="lending.book?.isbn" :customUrl="lending.book?.imageUrl" :title="lending.book?.title || 'Book'" size="small" />
             </td>
-            <td data-label="Book"><strong>{{ lending.book?.title ?? '—' }}</strong></td>
+            <td data-label="Title">
+              <a href="#" @click.prevent="openForm(lending)" style="text-decoration: none; color: inherit; font-weight: 700;">
+                {{ lending.book?.title ?? '—' }}
+              </a>
+            </td>
             <td data-label="Borrower">{{ lending.name }}</td>
             <td data-label="Lent On">{{ formatDate(lending.date) }}</td>
             <td data-label="Return Date">{{ formatDate(lending.returnDate) }}</td>
             <td data-label="Status">
-              <span :class="['bk-badge', isOverdue(lending) ? 'bk-badge-danger' : 'bk-badge-success']">
-                {{ isOverdue(lending) ? 'Overdue' : 'Active' }}
+              <span v-if="lending.returnedAt" class="bk-badge bk-badge-primary">Returned</span>
+              <span v-else :class="['bk-badge', isOverdue(lending) ? 'bk-badge-danger' : 'bk-badge-success']">
+                {{ isOverdue(lending) ? 'Overdue' : 'Lent Out' }}
               </span>
             </td>
             <td>
               <div class="bk-actions-cell">
+                <button 
+                  v-if="!lending.returnedAt" 
+                  class="bk-btn bk-btn-success bk-btn-sm bk-btn-icon" 
+                  @click="markAsReturned(lending)" 
+                  title="Mark as Returned"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
                 <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click="openForm(lending)" title="Edit">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 </button>
@@ -132,6 +163,12 @@
           <label class="bk-form-label">Return Date</label>
           <input v-model="form.returnDate" type="date" class="bk-form-input" required />
         </div>
+        <div class="bk-form-group">
+          <label class="bk-form-checkbox">
+            <input type="checkbox" :checked="!!form.returnedAt" @change="form.returnedAt = ($event.target as HTMLInputElement).checked ? new Date().toISOString() : null" />
+            <span>Mark as Returned</span>
+          </label>
+        </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
@@ -160,7 +197,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { getLendings, updateLending, createLending, deleteLending } from '../../services/LendingsService'
 import { getBooks } from '../../services/BooksService'
 import type { LendingDTO, BookDTO } from '../../types'
@@ -178,15 +215,15 @@ const search = ref('')
 const page = ref(1)
 const limit = ref(10)
 const total = ref(0)
-const sortBy = ref('date')
-const sortOrder = ref<'asc' | 'desc'>('desc')
+const sortBy = ref('returnedAt')
+const sortOrder = ref<'asc' | 'desc'>('asc')
 
 const showForm = ref(false)
 const showDelete = ref(false)
 const editingLending = ref<LendingDTO | null>(null)
 const deletingLending = ref<LendingDTO | null>(null)
 
-const form = ref({ name: '', date: '', returnDate: '', bookId: '' })
+const form = ref({ name: '', date: '', returnDate: '', bookId: '', returnedAt: null as string | null })
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 const filteredLendings = computed(() => {
@@ -252,6 +289,7 @@ function openForm(lending?: LendingDTO) {
       date: new Date(lending.date as string | Date).toISOString().split('T')[0] || '',
       returnDate: new Date(lending.returnDate as string | Date).toISOString().split('T')[0] || '',
       bookId: lending.bookId ?? '',
+      returnedAt: lending.returnedAt ? new Date(lending.returnedAt).toISOString() : null,
     }
   } else {
     editingLending.value = null
@@ -259,7 +297,8 @@ function openForm(lending?: LendingDTO) {
       name: '', 
       date: new Date().toISOString().split('T')[0] ?? '', 
       returnDate: '', 
-      bookId: '' 
+      bookId: '',
+      returnedAt: null
     }
   }
   showForm.value = true
@@ -275,6 +314,7 @@ function save() {
     name: form.value.name,
     date: new Date(form.value.date).toISOString(),
     returnDate: new Date(form.value.returnDate).toISOString(),
+    returnedAt: form.value.returnedAt,
     bookId: editingLending.value ? (editingLending.value.bookId ?? form.value.bookId) : form.value.bookId,
   }
 
@@ -297,6 +337,28 @@ function save() {
     },
   })
 }
+
+function markAsReturned(lending: LendingDTO) {
+  const payload = {
+    ...lending,
+    returnedAt: new Date().toISOString()
+  }
+  updateLending(lending.id!, payload).subscribe({
+    next: () => {
+      toast.value?.addToast('Book marked as returned!', 'success')
+      load()
+    },
+    error: (err) => {
+      toast.value?.addToast('Failed to update lending', 'error')
+      console.error(err)
+    }
+  })
+}
+
+watch(search, () => {
+  page.value = 1
+  load()
+})
 
 function confirmDelete(lending: LendingDTO) {
   deletingLending.value = lending

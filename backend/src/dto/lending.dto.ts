@@ -4,8 +4,9 @@ import { BookDTO } from './book.dto.js';
 export interface LendingDTO {
   id?: string;
   name: string;
-  date: Date;
-  returnDate: Date;
-  book: BookDTO;
+  date: Date | string;
+  returnDate: Date | string;
+  returnedAt?: Date | string | null;
+  book?: BookDTO;
   bookId?: string;
 }

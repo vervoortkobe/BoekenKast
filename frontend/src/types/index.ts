@@ -15,6 +15,7 @@ export interface LendingDTO {
   name: string;
   date: string | Date;
   returnDate: string | Date;
+  returnedAt?: string | Date | null;
   book?: BookDTO;
   bookId?: string;
 }
