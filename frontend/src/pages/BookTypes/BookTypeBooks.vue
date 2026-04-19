@@ -2,21 +2,48 @@
   <div>
     <div class="bk-breadcrumb">
       <router-link to="/types">Types</router-link>
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        style="opacity: 0.5"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
       <span>{{ typeName }}</span>
     </div>
 
     <div class="bk-page-header">
       <div>
         <h1 class="bk-page-title">{{ typeName }}</h1>
-        <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">
-          {{ total }} books in this type
+        <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem">
+          {{ total }} books of {{ typeName }}
         </p>
       </div>
-      <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem">
         <SearchBar v-model="search" placeholder="Search books..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="margin-right: 0.25rem"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
           Add {{ typeName }}
         </button>
       </div>
@@ -27,12 +54,42 @@
       <table class="bk-table">
         <thead>
           <tr>
-            <th style="width: 60px;">Cover</th>
-            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'title' }" @click="toggleSort('title')">
+            <th style="width: 60px">Cover</th>
+            <th
+              class="bk-sortable"
+              :class="{ 'bk-sort-active': sortBy === 'title' }"
+              @click="toggleSort('title')"
+            >
               Title
               <span class="bk-sort-icon">
-                <svg v-if="sortBy === 'title' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                <svg
+                  v-if="sortBy === 'title' && sortOrder === 'desc'"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
               </span>
             </th>
             <th>Author</th>
@@ -45,32 +102,130 @@
         <tbody>
           <tr v-for="book in filteredBooks" :key="book.id">
             <td data-label="Cover">
-              <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
+              <BookCover
+                :isbn="book.isbn"
+                :customUrl="book.imageUrl"
+                :title="book.title"
+                size="small"
+              />
             </td>
             <td data-label="Title">
-              <a href="#" @click.prevent="openForm(book)" style="text-decoration: none; color: inherit; font-weight: 700;">
+              <a
+                href="#"
+                @click.prevent="openForm(book)"
+                style="text-decoration: none; color: inherit; font-weight: 700"
+              >
                 {{ book.title }}
               </a>
             </td>
             <td data-label="Author">{{ book.author }}</td>
-            <td data-label="ISBN"><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
-            <td data-label="Color" style="text-align: center;">
-              <span :title="book.color ? 'Color' : 'Black & White'" :style="{ color: book.color ? '#10b981' : '#ef4444' }">
-                <svg v-if="book.color" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <td data-label="ISBN">
+              <code v-if="book.isbn" style="font-size: 0.8rem">{{ book.isbn }}</code
+              ><span v-else>—</span>
+            </td>
+            <td data-label="Color" style="text-align: center">
+              <span
+                :title="book.color ? 'Color' : 'Black & White'"
+                :style="{ color: book.color ? '#10b981' : '#ef4444' }"
+              >
+                <svg
+                  v-if="book.color"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
               </span>
             </td>
             <td data-label="Series">{{ book.bookSeries?.name ?? '—' }}</td>
             <td>
               <div class="bk-actions-cell">
-                <button class="bk-btn bk-btn-accent bk-btn-sm bk-btn-icon" @click="openLending(book)" title="Lend">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                <button
+                  class="bk-btn bk-btn-accent bk-btn-sm bk-btn-icon"
+                  @click="openLending(book)"
+                  title="Lend"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16 6 12 2 8 6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                  </svg>
                 </button>
-                <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click="openForm(book)" title="Edit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <button
+                  class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon"
+                  @click="openForm(book)"
+                  title="Edit"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
                 </button>
-                <button class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon" @click="confirmDelete(book)" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                <button
+                  class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon"
+                  @click="confirmDelete(book)"
+                  title="Delete"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path
+                      d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                    ></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
                 </button>
               </div>
             </td>
@@ -80,11 +235,11 @@
     </div>
 
     <!-- Pagination -->
-    <Pagination 
+    <Pagination
       v-if="books.length"
-      v-model="page" 
-      :total-items="total" 
-      :items-per-page="limit" 
+      v-model="page"
+      :total-items="total"
+      :items-per-page="limit"
       @update:model-value="load"
     />
 
@@ -92,23 +247,61 @@
     <div v-if="!books.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
         </div>
         <div class="bk-empty-title">No books found</div>
-        <p class="bk-empty-text">
-          No books are assigned to this type yet.
-        </p>
+        <p class="bk-empty-text">No books are assigned to this type yet.</p>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="margin-right: 0.25rem"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
           Add {{ typeName }}
         </button>
       </div>
     </div>
-    
+
     <div v-else-if="!filteredBooks.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
         </div>
         <div class="bk-empty-title">No results for "{{ search }}"</div>
         <p class="bk-empty-text">Try adjusting your search terms.</p>
@@ -116,17 +309,26 @@
     </div>
 
     <!-- Create/Edit Book Modal -->
-    <ModalDialog :show="showForm" :title="editingBook ? 'Edit Book' : 'New Book'" @close="closeForm">
+    <ModalDialog
+      :show="showForm"
+      :title="editingBook ? 'Edit Book' : 'New Book'"
+      @close="closeForm"
+    >
       <form @submit.prevent="save">
-        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-          <div style="flex: 1; min-width: 250px;">
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap">
+          <div style="flex: 1; min-width: 250px">
             <div class="bk-form-group">
               <label class="bk-form-label">Title</label>
               <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Author</label>
-              <input v-model="form.author" class="bk-form-input" placeholder="Author name" required />
+              <input
+                v-model="form.author"
+                class="bk-form-input"
+                placeholder="Author name"
+                required
+              />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">ISBN (Optional)</label>
@@ -134,7 +336,11 @@
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Custom Image URL (Optional)</label>
-              <input v-model="form.imageUrl" class="bk-form-input" placeholder="https://example.com/cover.jpg" />
+              <input
+                v-model="form.imageUrl"
+                class="bk-form-input"
+                placeholder="https://example.com/cover.jpg"
+              />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Book Series (Optional)</label>
@@ -150,16 +356,53 @@
               </label>
             </div>
           </div>
-          <div style="width: 120px;">
+          <div style="width: 120px">
             <label class="bk-form-label">Preview</label>
-            <BookCover :isbn="form.isbn" :customUrl="form.imageUrl" :title="form.title || 'Preview'" size="medium" />
+            <BookCover
+              :isbn="form.isbn"
+              :customUrl="form.imageUrl"
+              :title="form.title || 'Preview'"
+              size="medium"
+            />
           </div>
         </div>
-        <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
+        <div
+          class="bk-modal-footer"
+          style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border)"
+        >
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
-            <svg v-if="editingBook" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <svg
+              v-if="editingBook"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="margin-right: 0.25rem"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="margin-right: 0.25rem"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
             {{ editingBook ? 'Update' : 'Create' }}
           </button>
         </div>
@@ -168,16 +411,37 @@
 
     <!-- Delete Confirmation -->
     <ModalDialog :show="showDelete" title="Confirm Delete" @close="showDelete = false">
-      <p>Are you sure you want to delete <strong>{{ deletingBook?.title }}</strong>?</p>
-      <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
+      <p>
+        Are you sure you want to delete <strong>{{ deletingBook?.title }}</strong
+        >?
+      </p>
+      <div
+        class="bk-modal-footer"
+        style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border)"
+      >
         <button class="bk-btn bk-btn-ghost" @click="showDelete = false">Cancel</button>
         <button class="bk-btn bk-btn-danger" @click="remove()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        Delete
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="margin-right: 0.25rem"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            ></path>
+          </svg>
+          Delete
+        </button>
       </div>
     </ModalDialog>
-
 
     <!-- Lending Modal -->
     <LendingModal
@@ -245,7 +509,7 @@ const filteredBooks = computed(() => {
     (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
       b.author.toLowerCase().includes(q) ||
-      b.isbn?.toLowerCase().includes(q)
+      b.isbn?.toLowerCase().includes(q),
   )
 })
 
@@ -266,12 +530,12 @@ function load() {
     },
     error: (err: any) => console.error(err),
   })
-  getBooks({ 
-    typeId, 
-    page: page.value, 
-    limit: limit.value, 
-    sortBy: sortBy.value, 
-    sortOrder: sortOrder.value 
+  getBooks({
+    typeId,
+    page: page.value,
+    limit: limit.value,
+    sortBy: sortBy.value,
+    sortOrder: sortOrder.value,
   }).subscribe({
     next: (res: any) => {
       books.value = res.data
@@ -325,15 +589,13 @@ function save() {
     imageUrl: form.value.imageUrl || undefined,
   }
 
-  const op = editingBook.value
-    ? updateBook(editingBook.value.id!, payload)
-    : createBook(payload)
+  const op = editingBook.value ? updateBook(editingBook.value.id!, payload) : createBook(payload)
 
   op.subscribe({
     next: () => {
       toast.value?.addToast(
         editingBook.value ? 'Book updated successfully' : 'Book created successfully',
-        'success'
+        'success',
       )
       closeForm()
       load()
