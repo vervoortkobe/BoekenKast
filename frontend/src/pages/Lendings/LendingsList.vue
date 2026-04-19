@@ -47,14 +47,14 @@
         </thead>
         <tbody>
           <tr v-for="lending in filteredLendings" :key="lending.id">
-            <td>
+            <td data-label="Cover">
               <BookCover :isbn="lending.book?.isbn" :customUrl="lending.book?.imageUrl" :title="lending.book?.title || 'Book'" size="small" />
             </td>
-            <td><strong>{{ lending.book?.title ?? '—' }}</strong></td>
-            <td>{{ lending.name }}</td>
-            <td>{{ formatDate(lending.date) }}</td>
-            <td>{{ formatDate(lending.returnDate) }}</td>
-            <td>
+            <td data-label="Book"><strong>{{ lending.book?.title ?? '—' }}</strong></td>
+            <td data-label="Borrower">{{ lending.name }}</td>
+            <td data-label="Lent On">{{ formatDate(lending.date) }}</td>
+            <td data-label="Return Date">{{ formatDate(lending.returnDate) }}</td>
+            <td data-label="Status">
               <span :class="['bk-badge', isOverdue(lending) ? 'bk-badge-danger' : 'bk-badge-success']">
                 {{ isOverdue(lending) ? 'Overdue' : 'Active' }}
               </span>

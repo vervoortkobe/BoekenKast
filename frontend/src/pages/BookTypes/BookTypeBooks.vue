@@ -44,19 +44,19 @@
         </thead>
         <tbody>
           <tr v-for="book in filteredBooks" :key="book.id">
-            <td>
+            <td data-label="Cover">
               <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
             </td>
-            <td><strong>{{ book.title }}</strong></td>
-            <td>{{ book.author }}</td>
-            <td><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
-            <td style="text-align: center;">
+            <td data-label="Title"><strong>{{ book.title }}</strong></td>
+            <td data-label="Author">{{ book.author }}</td>
+            <td data-label="ISBN"><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
+            <td data-label="Color" style="text-align: center;">
               <span :title="book.color ? 'Color' : 'Black & White'" :style="{ color: book.color ? '#10b981' : '#ef4444' }">
                 <svg v-if="book.color" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </span>
             </td>
-            <td>{{ book.bookSeries?.name ?? '—' }}</td>
+            <td data-label="Series">{{ book.bookSeries?.name ?? '—' }}</td>
             <td>
               <div class="bk-actions-cell">
                 <button class="bk-btn bk-btn-accent bk-btn-sm bk-btn-icon" @click="openLending(book)" title="Lend">
