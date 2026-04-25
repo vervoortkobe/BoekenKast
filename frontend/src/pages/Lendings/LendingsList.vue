@@ -232,7 +232,19 @@ const editingLending = ref<LendingDTO | null>(null)
 const deletingLending = ref<LendingDTO | null>(null)
 
 const todayStr = new Date().toISOString().split('T')[0]
-const form = ref({ name: '', date: todayStr, returnDate: todayStr, bookId: '', returnedAt: null as string | null })
+const form = ref<{
+  name: string;
+  date: string;
+  returnDate: string;
+  bookId: string;
+  returnedAt: string | null;
+}>({ 
+  name: '', 
+  date: todayStr || '', 
+  returnDate: todayStr || '', 
+  bookId: '', 
+  returnedAt: null 
+})
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 const filteredLendings = computed(() => {
@@ -256,7 +268,8 @@ function formatDate(d: string | Date) {
 
 function isOverdue(lending: LendingDTO) {
   if (lending.returnedAt) return false
-  return new Date(lending.returnDate) < new Date()
+  const rd = lending.returnDate ? new Date(lending.returnDate) : new Date()
+  return rd < new Date()
 }
 
 function toggleSort(field: string) {
@@ -303,8 +316,8 @@ function openForm(lending?: LendingDTO) {
     editingLending.value = null
     form.value = { 
       name: '', 
-      date: todayStr, 
-      returnDate: todayStr, 
+      date: todayStr || '', 
+      returnDate: todayStr || '', 
       bookId: '',
       returnedAt: null
     }
@@ -318,11 +331,15 @@ function closeForm() {
 }
 
 function save() {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => save())
+  
+  const dateStr = form.value.date!;
+  const returnDateStr = form.value.returnDate!;
+
   const payload: any = {
     name: form.value.name,
-    date: new Date(form.value.date).toISOString(),
-    returnDate: new Date(form.value.returnDate).toISOString(),
+    date: new Date(String(dateStr)).toISOString(),
+    returnDate: new Date(String(returnDateStr)).toISOString(),
     returnedAt: form.value.returnedAt,
     bookId: editingLending.value ? (editingLending.value.bookId ?? form.value.bookId) : form.value.bookId,
   }
