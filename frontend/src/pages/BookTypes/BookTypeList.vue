@@ -26,7 +26,8 @@
           Manage your book categories
         </p>
       </div>
-      <div style="display: flex; gap: 1rem; align-items: center">
+      <div style="display: flex; align-items: center; gap: 1rem">
+        <SearchBar v-model="search" placeholder="Search types..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -45,45 +46,6 @@
           </svg>
           New Type
         </button>
-        <div class="bk-search-container">
-          <svg
-            class="bk-search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input
-            v-model="search"
-            class="bk-form-input"
-            placeholder="Search types..."
-            style="padding-left: 2.5rem; padding-right: 2.5rem"
-          />
-          <button v-if="search" class="bk-search-clear" @click="search = ''" title="Clear search">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
       </div>
     </div>
 
@@ -105,8 +67,16 @@
                 >
                   {{ type.books?.length ?? 0 }} book{{ (type.books?.length ?? 0) === 1 ? '' : 's' }}
                 </span>
-                <span class="bk-badge bk-badge-success" style="margin-left: 0.25rem;" v-if="type.books?.some(b => b.lendings?.length)">
-                  {{ type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }} lending{{ type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) === 1 ? '' : 's' }}
+                <span
+                  class="bk-badge bk-badge-success"
+                  style="margin-left: 0.25rem"
+                  v-if="type.books?.some((b) => b.lendings?.length)"
+                >
+                  {{ type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }} lending{{
+                    type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) === 1
+                      ? ''
+                      : 's'
+                  }}
                 </span>
               </p>
             </router-link>
@@ -221,7 +191,20 @@
     <div v-else-if="!types.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
         </div>
         <div class="bk-empty-title">No results for "{{ search }}"</div>
         <p class="bk-empty-text">Try adjusting your search terms.</p>
@@ -322,6 +305,31 @@
     </ModalDialog>
 
     <ToastNotification ref="toast" />
+
+    <!-- Decorative Waves -->
+    <div class="bk-waves">
+      <svg
+        class="waves"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28"
+        preserveAspectRatio="none"
+        shape-rendering="auto"
+      >
+        <defs>
+          <path
+            id="gentle-wave"
+            d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+          />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -334,6 +342,7 @@ import {
   deleteBookType,
 } from '../../services/BookTypesService'
 import type { BookTypeDTO } from '../../types'
+import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import Pagination from '../../components/Pagination.vue'
@@ -434,32 +443,3 @@ function remove() {
 
 onMounted(load)
 </script>
-
-<style scoped>
-.bk-search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-width: 250px;
-}
-.bk-search-icon {
-  position: absolute;
-  left: 0.75rem;
-  color: var(--bk-text-muted);
-  pointer-events: none;
-}
-.bk-search-clear {
-  position: absolute;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: var(--bk-text-muted);
-  display: flex;
-  align-items: center;
-}
-.bk-search-clear:hover {
-  color: var(--bk-danger);
-}
-</style>
