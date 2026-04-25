@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AllBooks from '../pages/AllBooks.vue'
+import AllBooks from '../pages/AllBooks/AllBooks.vue'
 import BookTypeList from '../pages/BookTypes/BookTypeList.vue'
 import BookTypeBooks from '../pages/BookTypes/BookTypeBooks.vue'
 import SeriesList from '../pages/Series/SeriesList.vue'
