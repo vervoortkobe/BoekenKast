@@ -44,10 +44,22 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   background: var(--bk-bg-page);
   color: var(--bk-text);
   transition: background var(--bk-transition), color var(--bk-transition);
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---- Navbar ---- */
@@ -156,7 +168,6 @@ body {
   border-radius: 50%;
   border: 1px solid var(--bk-border);
   background: var(--bk-surface);
-  /* Matches card/navbar background */
   color: var(--bk-text);
   cursor: pointer;
   display: flex;
@@ -179,11 +190,22 @@ body {
 /* ---- Content ---- */
 .bk-content {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* ---- Page Header ---- */
+.bk-content>div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .bk-page-header {
   display: flex;
   align-items: center;
@@ -804,7 +826,8 @@ body {
   justify-content: center;
   gap: 1rem;
   padding: 1.25rem 1rem;
-  margin-top: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
 }
 
 .bk-pagination-pages {
@@ -912,7 +935,7 @@ body {
     font-size: 1.5rem;
   }
 
-  .bk-page-header > div:last-child {
+  .bk-page-header>div:last-child {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -940,14 +963,12 @@ body {
     gap: 0.85rem;
   }
 
-  /* Table: horizontal scroll on mobile (keep as table) */
   .bk-table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
   }
 
-  /* Card-style stacking ONLY when .bk-cards-mobile is added */
   .bk-cards-mobile.bk-table-wrapper {
     background: transparent;
     border: none;
@@ -1042,5 +1063,12 @@ body {
   .bk-pagination {
     gap: 0.4rem;
     padding: 0.85rem 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+  }
+
+  .bk-content>div {
+    display: block;
+    flex: unset;
   }
 }
