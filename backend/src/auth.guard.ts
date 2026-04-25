@@ -12,6 +12,10 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    if (request.method === 'GET' && request.path !== '/auth/me') {
+      return true;
+    }
+
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
