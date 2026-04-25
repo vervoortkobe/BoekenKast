@@ -9,14 +9,20 @@ export class BookTypeService {
     limit: number = 10,
     sortBy: string = 'name',
     sortOrder: 'asc' | 'desc' = 'asc',
+    search?: string,
   ) {
     const parsedPage = Number(page) || 1;
     const parsedLimit = Number(limit) || 10;
     const skip = (parsedPage - 1) * parsedLimit;
     const orderBy = { [sortBy]: sortOrder };
 
+    const where = search 
+      ? { name: { contains: search } }
+      : {};
+
     const [data, total] = await Promise.all([
       prisma.bookType.findMany({
+        where,
         include: { 
           books: {
             include: { lendings: true }
@@ -26,7 +32,7 @@ export class BookTypeService {
         skip,
         take: parsedLimit,
       }),
-      prisma.bookType.count(),
+      prisma.bookType.count({ where }),
     ]);
 
     return { data, total };

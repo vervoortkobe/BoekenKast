@@ -21,12 +21,14 @@ export class BookSeriesController {
     @Query('limit') limit: number = 10,
     @Query('sortBy') sortBy: string = 'name',
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
+    @Query('search') search?: string,
   ) {
     return this.bookSeriesService.getAllBookSeries(
       page,
       limit,
       sortBy,
       sortOrder,
+      search,
     );
   }
 

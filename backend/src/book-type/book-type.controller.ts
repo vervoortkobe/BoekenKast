@@ -21,8 +21,15 @@ export class BookTypeController {
     @Query('limit') limit: number = 10,
     @Query('sortBy') sortBy: string = 'name',
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
+    @Query('search') search?: string,
   ) {
-    return this.bookTypeService.getAllBookTypes(page, limit, sortBy, sortOrder);
+    return this.bookTypeService.getAllBookTypes(
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      search,
+    );
   }
 
   @Get(':id')

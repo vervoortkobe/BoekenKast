@@ -21,7 +21,7 @@
 
     <!-- Cards Grid -->
     <div v-if="series.length" class="bk-card-grid">
-      <div v-for="s in filteredSeries" :key="s.id" class="bk-card">
+      <div v-for="s in series" :key="s.id" class="bk-card">
         <div class="bk-card-body" style="padding: 1rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
             <router-link :to="`/series/${s.id}/books`" style="text-decoration: none; flex: 1;">
@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <div v-else-if="!filteredSeries.length && search" class="bk-card">
+    <div v-else-if="!series.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -140,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { getBookSeries, createBookSeries, updateBookSeries, deleteBookSeries } from '../../services/SeriesService'
 import { getBookTypes } from '../../services/BookTypesService'
 import type { BookSeriesDTO, BookTypeDTO } from '../../types'
@@ -167,14 +167,18 @@ const total = ref(0)
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
-const filteredSeries = computed(() => {
-  if (!search.value) return series.value
-  const q = search.value.toLowerCase()
-  return series.value.filter((s: BookSeriesDTO) => s.name.toLowerCase().includes(q))
+// Reset page when searching
+watch(search, () => {
+  page.value = 1
+  load()
 })
 
 function load() {
-  getBookSeries({ page: page.value, limit: limit.value }).subscribe({
+  getBookSeries({ 
+    page: page.value, 
+    limit: limit.value,
+    search: search.value || undefined
+  }).subscribe({
     next: (res: any) => {
       series.value = res.data
       total.value = res.total

@@ -9,4 +9,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('auth/me')
+  getMe() {
+    return { authenticated: true, user: process.env.AUTH_USERNAME };
+  }
 }

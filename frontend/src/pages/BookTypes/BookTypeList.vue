@@ -174,7 +174,7 @@
     />
 
     <!-- Empty State -->
-    <div v-if="!types.length" class="bk-card">
+    <div v-if="!types.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg
@@ -214,6 +214,17 @@
           </svg>
           Create Type
         </button>
+      </div>
+    </div>
+
+    <!-- No results for search -->
+    <div v-else-if="!types.length && search" class="bk-card">
+      <div class="bk-empty">
+        <div class="bk-empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <div class="bk-empty-title">No results for "{{ search }}"</div>
+        <p class="bk-empty-text">Try adjusting your search terms.</p>
       </div>
     </div>
 

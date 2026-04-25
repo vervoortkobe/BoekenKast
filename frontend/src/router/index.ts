@@ -9,7 +9,7 @@ import LendingsList from '../pages/Lendings/LendingsList.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/types' },
+    { path: '/', redirect: '/books' },
     { path: '/books', component: AllBooks },
     { path: '/types', component: BookTypeList },
     { path: '/types/:id/books', component: BookTypeBooks },

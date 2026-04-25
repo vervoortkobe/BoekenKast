@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { BookController } from './book/book.controller.js';
@@ -13,6 +15,16 @@ import { BookTypeService } from './book-type/book-type.service.js';
 @Module({
   imports: [],
   controllers: [AppController, BookController, BookTypeController, BookSeriesController, LendingController],
-  providers: [AppService, BookService, LendingService, BookSeriesService, BookTypeService],
+  providers: [
+    AppService,
+    BookService,
+    LendingService,
+    BookSeriesService,
+    BookTypeService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule { }

@@ -27,6 +27,7 @@
       <table class="bk-table">
         <thead>
           <tr>
+            <th style="width: 40px">#</th>
             <th style="width: 60px;">Cover</th>
             <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'title' }" @click="toggleSort('title')">
               Title
@@ -50,7 +51,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in books" :key="book.id">
+          <tr v-for="(book, index) in books" :key="book.id">
+            <td style="color: var(--bk-text-muted); font-size: 0.85rem">
+              {{ (page - 1) * limit + index + 1 }}
+            </td>
             <td data-label="Cover">
               <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
             </td>

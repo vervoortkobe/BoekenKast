@@ -32,8 +32,8 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 
-function handleLogin() {
-  if (login(username.value, password.value)) {
+async function handleLogin() {
+  if (await login(username.value, password.value)) {
     emit('login-success')
     emit('close')
     username.value = ''
