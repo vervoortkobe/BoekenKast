@@ -6,8 +6,8 @@ export const isLoggedIn = ref(localStorage.getItem(IS_LOGGED_IN_KEY) === 'true')
 export const showLoginModal = ref(false)
 export const pendingAction = shallowRef<(() => void) | null>(null)
 
-export function openLogin(onSuccess?: () => void) {
-  pendingAction.value = onSuccess || null
+export function openLogin(onSuccess?: unknown) {
+  pendingAction.value = typeof onSuccess === 'function' ? (onSuccess as () => void) : null
   showLoginModal.value = true
 }
 
@@ -25,7 +25,7 @@ export function login(username: string, password: string) {
 
     const callback = pendingAction.value
     closeLogin()
-    if (callback) callback()
+    if (typeof callback === 'function') callback()
 
     return true
   }
