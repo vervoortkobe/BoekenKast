@@ -717,7 +717,8 @@ body {
 }
 
 [data-bs-theme="dark"] .bk-waves {
-  display: none;
+  display: block;
+  opacity: 0.4;
 }
 
 .waves {
@@ -1071,6 +1072,11 @@ body {
     padding: 0.85rem 0.5rem;
     margin-top: 1rem;
     padding-top: 0.85rem;
+  }
+
+  .bk-waves {
+    height: 18vh;
+    max-height: 220px;
   }
 
   .bk-content>div {
