@@ -20,7 +20,7 @@
     </div>
 
     <!-- Lendings Table -->
-    <div v-if="lendings.length" class="bk-table-wrapper">
+    <div v-if="lendings.length" class="bk-table-wrapper bk-cards-mobile">
       <table class="bk-table">
         <thead>
           <tr>

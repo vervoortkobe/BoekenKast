@@ -181,7 +181,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  padding-bottom: 6rem;
 }
 
 /* ---- Page Header ---- */
@@ -804,15 +803,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 1rem;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bk-surface);
-  border-top: 1px solid var(--bk-border);
-  z-index: 900;
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem 1rem;
+  margin-top: 1rem;
 }
 
 .bk-pagination-pages {
@@ -835,29 +827,78 @@ body {
   }
 }
 
+/* ---- Mobile Bottom Navigation ---- */
+.bk-mobile-nav {
+  display: none;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   :root {
     --bk-radius: 16px;
   }
 
+  /* Hide desktop navbar on mobile */
   .bk-navbar {
-    padding: 0 1.25rem;
-    height: 56px;
+    display: none;
   }
 
-  .bk-logo-text {
-    font-size: 1.25rem;
+  /* Show mobile bottom nav */
+  .bk-mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bk-surface);
+    border-top: 1px solid var(--bk-border);
+    padding: 0.25rem 0 calc(0.25rem + env(safe-area-inset-bottom));
+    z-index: 1001;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    justify-content: space-around;
+    align-items: stretch;
   }
 
-  .bk-navbar-brand svg {
-    width: 24px;
-    height: 24px;
+  .bk-mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    flex: 1;
+    padding: 0.4rem 0.25rem;
+    color: var(--bk-text-muted);
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 600;
+    transition: color var(--bk-transition);
+    border-radius: 0;
+  }
+
+  .bk-mobile-nav-link svg {
+    opacity: 0.6;
+    transition: all var(--bk-transition);
+  }
+
+  .bk-mobile-nav-link.active,
+  .bk-mobile-nav-link.router-link-active {
+    color: var(--bk-primary);
+  }
+
+  .bk-mobile-nav-link.active svg,
+  .bk-mobile-nav-link.router-link-active svg {
+    opacity: 1;
+  }
+
+  .bk-mobile-nav-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
   }
 
   .bk-content {
     padding: 1rem;
-    padding-bottom: 8rem;
+    padding-bottom: 6rem;
   }
 
   .bk-page-header {
@@ -871,7 +912,7 @@ body {
     font-size: 1.5rem;
   }
 
-  .bk-page-header>div:last-child {
+  .bk-page-header > div:last-child {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -899,75 +940,36 @@ body {
     gap: 0.85rem;
   }
 
+  /* Table: horizontal scroll on mobile (keep as table) */
   .bk-table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
-    /* Subtle hint that there's more to scroll */
-    background: linear-gradient(to right, var(--bk-surface) 30%, rgba(var(--bk-surface-rgb), 0)),
-                linear-gradient(to right, rgba(var(--bk-surface-rgb), 0), var(--bk-surface) 70%) 100% 0,
-                radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
-                radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 0;
-    background-repeat: no-repeat;
-    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-    background-attachment: local, local, scroll, scroll;
   }
 
-  /* Mobile Bottom Navigation */
-  .bk-nav-links {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--bk-surface);
-    border-top: 1px solid var(--bk-border);
-    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    justify-content: space-around;
-    z-index: 1001;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-  }
-
-  .bk-nav-link {
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.5rem 0;
-    border-radius: var(--bk-radius-sm);
-  }
-
-  .bk-nav-link svg {
-    width: 20px;
-    height: 20px;
-    opacity: 0.8;
-  }
-
-  /* Stackable Tables */
-  .bk-table-wrapper {
+  /* Card-style stacking ONLY when .bk-cards-mobile is added */
+  .bk-cards-mobile.bk-table-wrapper {
     background: transparent;
     border: none;
     box-shadow: none;
     overflow: visible;
   }
 
-  .bk-table {
-    display: block;
-    width: 100%;
-    min-width: auto;
-  }
-
-  .bk-table thead {
-    display: none; /* Hide headers on mobile */
-  }
-
-  .bk-table tbody {
+  .bk-cards-mobile .bk-table {
     display: block;
     width: 100%;
   }
 
-  .bk-table tr {
+  .bk-cards-mobile .bk-table thead {
+    display: none;
+  }
+
+  .bk-cards-mobile .bk-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .bk-cards-mobile .bk-table tr {
     display: block;
     background: var(--bk-surface);
     border: 1px solid var(--bk-border);
@@ -977,7 +979,7 @@ body {
     box-shadow: var(--bk-shadow);
   }
 
-  .bk-table td {
+  .bk-cards-mobile .bk-table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -985,21 +987,18 @@ body {
     border-bottom: 1px solid var(--bk-border);
     text-align: right;
     font-size: 0.9rem;
-    position: relative;
   }
 
-  .bk-table td:last-child {
+  .bk-cards-mobile .bk-table td:last-child {
     border-bottom: none;
-    padding-bottom: 0;
-    margin-top: 0.5rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--bk-border);
     justify-content: flex-end;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--bk-border);
   }
 
-  .bk-table td::before {
+  .bk-cards-mobile .bk-table td::before {
     content: attr(data-label);
-    display: block;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.7rem;
@@ -1008,27 +1007,8 @@ body {
     margin-right: 1rem;
   }
 
-  /* Specific handling for empty data-label (like the ID column) */
-  .bk-table td:not([data-label])::before {
-    content: "#";
-  }
-
-  .bk-table .bk-actions-cell {
+  .bk-cards-mobile .bk-table .bk-actions-cell {
     justify-content: flex-end;
-    width: auto;
-  }
-
-  .bk-theme-toggle {
-    position: fixed;
-    bottom: calc(4.5rem + env(safe-area-inset-bottom));
-    right: 1.25rem;
-    margin: 0;
-    width: 48px;
-    height: 48px;
-    background: var(--bk-surface);
-    box-shadow: var(--bk-shadow-lg);
-    border-color: var(--bk-primary);
-    z-index: 1002;
   }
 
   .bk-modal {
@@ -1060,9 +1040,7 @@ body {
   }
 
   .bk-pagination {
-    gap: 0.5rem;
-    padding: 0.5rem;
-    flex-wrap: wrap;
-    bottom: calc(3.5rem + env(safe-area-inset-bottom));
+    gap: 0.4rem;
+    padding: 0.85rem 0.5rem;
   }
 }

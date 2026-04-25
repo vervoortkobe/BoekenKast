@@ -50,7 +50,7 @@
     </div>
 
     <!-- Books Table -->
-    <div v-if="books.length" class="bk-table-wrapper">
+    <div v-if="books.length" class="bk-table-wrapper bk-cards-mobile">
       <table class="bk-table">
         <thead>
           <tr>
