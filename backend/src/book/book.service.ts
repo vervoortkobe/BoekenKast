@@ -12,16 +12,32 @@ export class BookService {
     typeId?: string,
     seriesId?: string,
     author?: string,
+    search?: string,
   ) {
     const parsedPage = Number(page) || 1;
     const parsedLimit = Number(limit) || 10;
     const skip = (parsedPage - 1) * parsedLimit;
-    const orderBy = { [sortBy]: sortOrder };
+    
+    let orderBy: any = { [sortBy]: sortOrder };
+    if (sortBy === 'bookType') {
+      orderBy = { bookType: { name: sortOrder } };
+    } else if (sortBy === 'bookSeries') {
+      orderBy = { bookSeries: { name: sortOrder } };
+    }
 
     const where: any = {};
     if (typeId) where.bookTypeId = typeId;
     if (seriesId) where.bookSeriesId = seriesId;
     if (author) where.author = { contains: author, mode: 'insensitive' };
+    
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { author: { contains: search, mode: 'insensitive' } },
+        { isbn: { contains: search, mode: 'insensitive' } },
+        { bookSeries: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       prisma.book.findMany({

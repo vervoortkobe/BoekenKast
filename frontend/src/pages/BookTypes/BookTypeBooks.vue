@@ -600,7 +600,8 @@ const filteredBooks = computed(() => {
     (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
       b.author?.toLowerCase().includes(q) ||
-      b.isbn?.toLowerCase().includes(q),
+      b.isbn?.toLowerCase().includes(q) ||
+      b.bookSeries?.name?.toLowerCase().includes(q),
   )
 })
 

@@ -23,7 +23,8 @@ export class BookController {
     @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'asc',
     @Query('typeId') typeId?: string,
     @Query('seriesId') seriesId?: string,
-    @Query('author') author?: string, // Add author filter
+    @Query('author') author?: string,
+    @Query('search') search?: string,
   ) {
     return this.bookService.getAllBooks(
       page,
@@ -33,6 +34,7 @@ export class BookController {
       typeId,
       seriesId,
       author,
+      search,
     );
   }
 

@@ -110,16 +110,52 @@
                 </svg>
               </span>
             </th>
-            <th>Type</th>
             <th
               class="bk-sortable"
-              :class="{ 'bk-sort-active': sortBy === 'bookSeriesId' }"
-              @click="toggleSort('bookSeriesId')"
+              :class="{ 'bk-sort-active': sortBy === 'bookType' }"
+              @click="toggleSort('bookType')"
+            >
+              Type
+              <span class="bk-sort-icon">
+                <svg
+                  v-if="sortBy === 'bookType' && sortOrder === 'desc'"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+              </span>
+            </th>
+            <th
+              class="bk-sortable"
+              :class="{ 'bk-sort-active': sortBy === 'bookSeries' }"
+              @click="toggleSort('bookSeries')"
             >
               Series
               <span class="bk-sort-icon">
                  <svg
-                  v-if="sortBy === 'bookSeriesId' && sortOrder === 'desc'"
+                  v-if="sortBy === 'bookSeries' && sortOrder === 'desc'"
                   xmlns="http://www.w3.org/2000/svg"
                   width="14"
                   height="14"
