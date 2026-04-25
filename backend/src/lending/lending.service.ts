@@ -7,7 +7,7 @@ export class LendingService {
   async getAllLendings(
     page: number = 1,
     limit: number = 10,
-    sortBy: string = 'lendingDate',
+    sortBy: string = 'date',
     sortOrder: 'asc' | 'desc' = 'desc',
     bookId?: string,
   ) {
@@ -60,7 +60,11 @@ export class LendingService {
         name: lending.name,
         date: lending.date,
         returnDate: lending.returnDate,
-        returnedAt: lending.returnedAt ? new Date(lending.returnedAt) : (lending.returnedAt === null ? null : undefined),
+        returnedAt: lending.returnedAt
+          ? new Date(lending.returnedAt)
+          : lending.returnedAt === null
+            ? null
+            : undefined,
         bookId: lending.bookId as string,
       },
     });
