@@ -1,10 +1,10 @@
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 
 const IS_LOGGED_IN_KEY = 'bk-is-logged-in'
 
 export const isLoggedIn = ref(localStorage.getItem(IS_LOGGED_IN_KEY) === 'true')
 export const showLoginModal = ref(false)
-export const pendingAction = ref<(() => void) | null>(null)
+export const pendingAction = shallowRef<(() => void) | null>(null)
 
 export function openLogin(onSuccess?: () => void) {
   pendingAction.value = onSuccess || null
@@ -22,11 +22,11 @@ export function login(username: string, password: string) {
   if (username === envUser && password === envPass) {
     isLoggedIn.value = true
     localStorage.setItem(IS_LOGGED_IN_KEY, 'true')
-    
-    if (pendingAction.value) {
-      pendingAction.value()
-      pendingAction.value = null
-    }
+
+    const callback = pendingAction.value
+    closeLogin()
+    if (callback) callback()
+
     return true
   }
   return false
