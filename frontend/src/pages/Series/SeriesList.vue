@@ -188,7 +188,7 @@ function load() {
 }
 
 function openForm(s?: BookSeriesDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => openForm(s))
   if (s) {
     editingSeries.value = s
     form.value = { 
@@ -239,7 +239,7 @@ function save() {
 }
 
 function confirmDelete(s: BookSeriesDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => confirmDelete(s))
   deletingSeries.value = s
   showDelete.value = true
 }

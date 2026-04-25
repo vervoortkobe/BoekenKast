@@ -361,7 +361,7 @@ function load() {
 }
 
 function openForm(type?: BookTypeDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => openForm(type))
   if (type) {
     editingType.value = type
     form.value = { name: type.name }
@@ -400,7 +400,7 @@ function save() {
 }
 
 function confirmDelete(type: BookTypeDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => confirmDelete(type))
   deletingType.value = type
   showDelete.value = true
 }

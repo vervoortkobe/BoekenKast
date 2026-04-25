@@ -289,7 +289,7 @@ function load() {
 }
 
 function openForm(lending?: LendingDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => openForm(lending))
   if (lending) {
     editingLending.value = lending
     form.value = {
@@ -348,7 +348,7 @@ function save() {
 }
 
 function markAsReturned(lending: LendingDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => markAsReturned(lending))
   const payload = {
     ...lending,
     returnedAt: new Date().toISOString()
@@ -371,7 +371,7 @@ watch(search, () => {
 })
 
 function confirmDelete(lending: LendingDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => confirmDelete(lending))
   deletingLending.value = lending
   showDelete.value = true
 }

@@ -576,6 +576,7 @@ const form = ref({
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 function createNewSeries() {
+  if (!isLoggedIn.value) return openLogin(createNewSeries)
   if (!newSeriesName.value) return
   createBookSeries({ name: newSeriesName.value }).subscribe({
     next: (res: any) => {
@@ -646,7 +647,7 @@ watch(search, () => {
 })
 
 function openForm(book?: BookDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => openForm(book))
   if (book) {
     editingBook.value = book
     form.value = {
@@ -700,7 +701,7 @@ function save() {
 }
 
 function confirmDelete(book: BookDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => confirmDelete(book))
   deletingBook.value = book
   showDelete.value = true
 }
@@ -722,7 +723,7 @@ function remove() {
 }
 
 function openLending(book: BookDTO) {
-  if (!isLoggedIn.value) return openLogin()
+  if (!isLoggedIn.value) return openLogin(() => openLending(book))
   lendingBook.value = book
   showLending.value = true
 }
