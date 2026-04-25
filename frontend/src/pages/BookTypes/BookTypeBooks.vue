@@ -191,10 +191,10 @@
                 {{ book.title }}
               </a>
             </td>
-            <td data-label="Author">{{ book.author }}</td>
+            <td data-label="Author">{{ book.author ?? '—' }}</td>
             <td data-label="ISBN">
-              <code v-if="book.isbn" style="font-size: 0.8rem">{{ book.isbn }}</code
-              ><span v-else>—</span>
+              <code v-if="book.isbn" style="font-size: 0.8rem">{{ book.isbn }}</code>
+              <span v-else>—</span>
             </td>
             <td data-label="Color" style="text-align: center">
               <span

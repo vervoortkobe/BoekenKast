@@ -171,7 +171,7 @@
                 {{ book.title }}
               </a>
             </td>
-            <td data-label="Author">{{ book.author }}</td>
+            <td data-label="Author">{{ book.author ?? '—' }}</td>
             <td data-label="Type">{{ book.bookType?.name ?? '—' }}</td>
             <td data-label="Series">{{ book.bookSeries?.name ?? '—' }}</td>
             <td data-label="Lendings">
