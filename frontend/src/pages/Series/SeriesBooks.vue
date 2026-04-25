@@ -50,7 +50,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in filteredBooks" :key="book.id">
+          <tr v-for="book in books" :key="book.id">
             <td data-label="Cover">
               <BookCover :isbn="book.isbn" :customUrl="book.imageUrl" :title="book.title" size="small" />
             </td>
@@ -59,7 +59,7 @@
                 {{ book.title }}
               </a>
             </td>
-            <td data-label="Author">{{ book.author ?? '—' }}</td>
+            <td data-label="Author">{{ book.author || '—' }}</td>
             <td data-label="ISBN"><code v-if="book.isbn" style="font-size: 0.8rem;">{{ book.isbn }}</code><span v-else>—</span></td>
             <td data-label="Type">{{ book.bookType?.name ?? '—' }}</td>
             <td data-label="Color" style="text-align: center;">
@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <div v-else-if="!filteredBooks.length && search" class="bk-card">
+    <div v-else-if="!books.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -255,16 +255,7 @@ watch(search, () => {
   load()
 })
 
-const filteredBooks = computed(() => {
-  if (!search.value) return books.value
-  const q = search.value.toLowerCase()
-  return books.value.filter(
-    (b: BookDTO) =>
-      b.title.toLowerCase().includes(q) ||
-      b.author?.toLowerCase().includes(q) ||
-      b.isbn?.toLowerCase().includes(q)
-  )
-})
+
 
 function toggleSort(field: string) {
   if (sortBy.value === field) {
@@ -286,7 +277,8 @@ function load() {
     page: page.value, 
     limit: limit.value, 
     sortBy: sortBy.value, 
-    sortOrder: sortOrder.value 
+    sortOrder: sortOrder.value,
+    search: search.value,
   }).subscribe({
     next: (res: any) => {
       books.value = res.data

@@ -80,7 +80,7 @@
                 {{ lending.book?.title ?? '—' }}
               </a>
             </td>
-            <td data-label="Author">{{ lending.book?.author ?? '—' }}</td>
+            <td data-label="Author">{{ lending.book?.author || '—' }}</td>
             <td data-label="Borrower">{{ lending.name }}</td>
             <td data-label="Lent On">{{ formatDate(lending.date) }}</td>
             <td data-label="Return Date">{{ formatDate(lending.returnDate) }}</td>

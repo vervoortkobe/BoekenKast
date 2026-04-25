@@ -17,7 +17,7 @@ export class BookService {
     const parsedPage = Number(page) || 1;
     const parsedLimit = Number(limit) || 10;
     const skip = (parsedPage - 1) * parsedLimit;
-    
+
     let orderBy: any = { [sortBy]: sortOrder };
     if (sortBy === 'bookType') {
       orderBy = { bookType: { name: sortOrder } };
@@ -28,14 +28,14 @@ export class BookService {
     const where: any = {};
     if (typeId) where.bookTypeId = typeId;
     if (seriesId) where.bookSeriesId = seriesId;
-    if (author) where.author = { contains: author, mode: 'insensitive' };
-    
+    if (author) where.author = { contains: author };
+
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { author: { contains: search, mode: 'insensitive' } },
-        { isbn: { contains: search, mode: 'insensitive' } },
-        { bookSeries: { name: { contains: search, mode: 'insensitive' } } },
+        { title: { contains: search } },
+        { author: { contains: search } },
+        { isbn: { contains: search } },
+        { bookSeries: { name: { contains: search } } },
       ];
     }
 

@@ -173,7 +173,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in filteredBooks" :key="book.id">
+          <tr v-for="book in books" :key="book.id">
             <td data-label="Cover">
               <BookCover
                 :isbn="book.isbn"
@@ -191,7 +191,7 @@
                 {{ book.title }}
               </a>
             </td>
-            <td data-label="Author">{{ book.author ?? '—' }}</td>
+            <td data-label="Author">{{ book.author || '—' }}</td>
             <td data-label="ISBN">
               <code v-if="book.isbn" style="font-size: 0.8rem">{{ book.isbn }}</code>
               <span v-else>—</span>
@@ -365,7 +365,7 @@
       </div>
     </div>
 
-    <div v-else-if="!filteredBooks.length && search" class="bk-card">
+    <div v-else-if="!books.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg
@@ -593,17 +593,7 @@ function createNewSeries() {
   })
 }
 
-const filteredBooks = computed(() => {
-  if (!search.value) return books.value
-  const q = search.value.toLowerCase()
-  return books.value.filter(
-    (b: BookDTO) =>
-      b.title.toLowerCase().includes(q) ||
-      b.author?.toLowerCase().includes(q) ||
-      b.isbn?.toLowerCase().includes(q) ||
-      b.bookSeries?.name?.toLowerCase().includes(q),
-  )
-})
+
 
 function toggleSort(field: string) {
   if (sortBy.value === field) {
@@ -628,6 +618,7 @@ function load() {
     limit: limit.value,
     sortBy: sortBy.value,
     sortOrder: sortOrder.value,
+    search: search.value,
   }).subscribe({
     next: (res: any) => {
       books.value = res.data
