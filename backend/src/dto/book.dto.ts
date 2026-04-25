@@ -6,7 +6,7 @@ import { LendingDTO } from './lending.dto.js';
 export interface BookDTO {
   id?: string;
   title: string;
-  author: string;
+  author?: string;
   isbn?: string;
   bookType: BookTypeDTO;
   bookTypeId?: string;

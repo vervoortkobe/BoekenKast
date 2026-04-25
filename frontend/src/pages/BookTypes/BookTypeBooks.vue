@@ -402,12 +402,11 @@
               <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
             <div class="bk-form-group">
-              <label class="bk-form-label">Author</label>
+              <label class="bk-form-label">Author (Optional)</label>
               <input
                 v-model="form.author"
                 class="bk-form-input"
                 placeholder="Author name"
-                required
               />
             </div>
             <div class="bk-form-group">
@@ -599,7 +598,7 @@ const filteredBooks = computed(() => {
   return books.value.filter(
     (b: BookDTO) =>
       b.title.toLowerCase().includes(q) ||
-      b.author.toLowerCase().includes(q) ||
+      b.author?.toLowerCase().includes(q) ||
       b.isbn?.toLowerCase().includes(q),
   )
 })
@@ -652,7 +651,7 @@ function openForm(book?: BookDTO) {
     editingBook.value = book
     form.value = {
       title: book.title,
-      author: book.author,
+      author: book.author || '',
       isbn: book.isbn || '',
       bookSeriesId: book.bookSeriesId ?? '',
       color: book.color,

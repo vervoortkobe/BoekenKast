@@ -34,7 +34,7 @@ model BookSeries {
 model Book {
   id           String      @id @default(cuid())
   title        String
-  author       String
+  author       String?
   isbn         String?
   bookType     BookType    @relation(fields: [bookTypeId], references: [id])
   bookTypeId   String

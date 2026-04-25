@@ -343,12 +343,11 @@
               <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
             <div class="bk-form-group">
-              <label class="bk-form-label">Author</label>
+              <label class="bk-form-label">Author (Optional)</label>
               <input
                 v-model="form.author"
                 class="bk-form-input"
                 placeholder="Author name"
-                required
               />
             </div>
             <div class="bk-form-group">
@@ -551,7 +550,7 @@ function openForm(book?: BookDTO) {
     editingBook.value = book
     form.value = {
       title: book.title,
-      author: book.author,
+      author: book.author || '',
       isbn: book.isbn || '',
       bookTypeId: book.bookTypeId || '',
       bookSeriesId: book.bookSeriesId ?? '',

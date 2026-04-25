@@ -25,7 +25,7 @@ export interface LendingDTO {
 export interface BookDTO {
   id?: string;
   title: string;
-  author: string;
+  author?: string;
   isbn?: string | null;
   bookType?: BookTypeDTO;
   bookTypeId?: string;
