@@ -349,7 +349,7 @@ const search = ref('')
 
 // Pagination state
 const page = ref(1)
-const limit = ref(12)
+const limit = ref(15)
 const total = ref(0)
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
