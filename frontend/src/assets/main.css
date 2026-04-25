@@ -8,7 +8,7 @@
   --bk-warning: #f59e0b;
   --bk-surface: #ffffff;
   --bk-surface-rgb: 255, 255, 255;
-  --bk-surface-alt: #f1f5f9;
+  --bk-surface-alt: #f8fafc;
   --bk-text: #0f172a;
   --bk-text-muted: #475569;
   --bk-border: #e2e8f0;
@@ -43,16 +43,18 @@
 }
 
 body {
-  background: var(--bk-surface-alt);
+  background: #f1f5f9;
   color: var(--bk-text);
   transition: background var(--bk-transition), color var(--bk-transition);
 }
 
 /* ---- Navbar ---- */
 .bk-navbar {
-  background: var(--bk-surface);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--bk-border);
-  box-shadow: var(--bk-shadow);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   padding: 0 2rem;
   height: 64px;
   display: flex;
@@ -61,7 +63,11 @@ body {
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background var(--bk-transition), border-color var(--bk-transition);
+  transition: all var(--bk-transition);
+}
+
+[data-bs-theme="dark"] .bk-navbar {
+  background: rgba(30, 41, 59, 0.85);
 }
 
 .bk-navbar-brand {
@@ -352,6 +358,7 @@ body {
   cursor: pointer;
   user-select: none;
   transition: all var(--bk-transition);
+  white-space: nowrap;
 }
 
 .bk-table th.bk-sortable:hover {
@@ -360,7 +367,9 @@ body {
 }
 
 .bk-table .bk-sort-icon {
-  margin-left: 0.4rem;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.25rem;
   opacity: 0.3;
   transition: opacity var(--bk-transition);
 }

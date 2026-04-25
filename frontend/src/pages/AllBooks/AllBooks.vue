@@ -373,10 +373,12 @@
             <div class="bk-form-group">
               <label class="bk-form-label">Book Series (Optional)</label>
               <div style="display: flex; gap: 0.5rem">
-                <select v-model="form.bookSeriesId" class="bk-form-select">
-                  <option value="">None</option>
-                  <option v-for="s in bookSeries" :key="s.id" :value="s.id">{{ s.name }}</option>
-                </select>
+                <SearchableSelect
+                  v-model="form.bookSeriesId"
+                  :options="bookSeries"
+                  label-key="name"
+                  placeholder="Select a series..."
+                />
                 <button type="button" class="bk-btn bk-btn-ghost" @click="showNewSeries = true" title="Create New Series">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
@@ -455,17 +457,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { getBooks, createBook, updateBook, deleteBook } from '../services/BooksService'
-import { getBookTypes } from '../services/BookTypesService'
-import { getBookSeries, createBookSeries } from '../services/SeriesService'
-import type { BookDTO, BookSeriesDTO, BookTypeDTO } from '../types'
+import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
+import { getBookTypes } from '../../services/BookTypesService'
+import { getBookSeries, createBookSeries } from '../../services/SeriesService'
+import type { BookDTO, BookSeriesDTO, BookTypeDTO } from '../../types'
 import SearchBar from '../components/SearchBar.vue'
 import ModalDialog from '../components/ModalDialog.vue'
 import LendingModal from '../components/LendingModal.vue'
 import ToastNotification from '../components/ToastNotification.vue'
 import BookCover from '../components/BookCover.vue'
 import Pagination from '../components/Pagination.vue'
-import { isLoggedIn, openLogin } from '../services/AuthService'
+import SearchableSelect from '../components/SearchableSelect.vue'
+import { isLoggedIn, openLogin } from '../../services/AuthService'
 
 const books = ref<BookDTO[]>([])
 const bookSeries = ref<BookSeriesDTO[]>([])

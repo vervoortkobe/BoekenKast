@@ -24,7 +24,7 @@
         :class="{ selected: option.id === modelValue }"
         @click="select(option)"
       >
-        {{ option.title }}
+        {{ option[labelKey] }}
       </div>
       <div v-if="filteredOptions.length === 0" class="bk-select-no-results">
         No results found
@@ -34,13 +34,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   modelValue: string
   options: any[]
   placeholder?: string
-}>()
+  labelKey?: string
+}>(), {
+  labelKey: 'title',
+  placeholder: 'Search...'
+})
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -48,18 +52,18 @@ const search = ref('')
 const isOpen = ref(false)
 
 const filteredOptions = computed(() => {
-  if (!search.value) {
+  if (!search.value || (props.modelValue && search.value === props.options.find(o => o.id === props.modelValue)?.[props.labelKey])) {
     return props.options.slice(0, 10)
   }
   const q = search.value.toLowerCase()
   return props.options.filter(o => 
-    o.title.toLowerCase().includes(q)
+    o[props.labelKey].toLowerCase().includes(q)
   )
 })
 
 function select(option: any) {
   emit('update:modelValue', option.id)
-  search.value = option.title
+  search.value = option[props.labelKey]
   isOpen.value = false
 }
 
@@ -71,14 +75,21 @@ function clear() {
 
 function close() {
   isOpen.value = false
-  // If no selection, reset search text to previous selection or empty
+  syncSearch()
+}
+
+function syncSearch() {
   const selected = props.options.find(o => o.id === props.modelValue)
   if (selected) {
-    search.value = selected.title
-  } else if (!props.modelValue) {
+    search.value = selected[props.labelKey]
+  } else {
     search.value = ''
   }
 }
+
+watch(() => props.modelValue, syncSearch)
+watch(() => props.options, syncSearch, { deep: true })
+onMounted(syncSearch)
 
 // Simple click-outside directive or logic
 const vClickOutside = {
