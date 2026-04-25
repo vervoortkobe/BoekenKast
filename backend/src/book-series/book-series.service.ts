@@ -17,7 +17,11 @@ export class BookSeriesService {
 
     const [data, total] = await Promise.all([
       prisma.bookSeries.findMany({
-        include: { books: true },
+        include: { 
+          books: {
+            include: { lendings: true }
+          } 
+        },
         orderBy,
         skip,
         take: parsedLimit,
@@ -36,11 +40,24 @@ export class BookSeriesService {
   }
 
   async createBookSeries(bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.create({ data: { name: bookSeries.name } });
+    return prisma.bookSeries.create({
+      data: {
+        name: bookSeries.name,
+        defaultAuthor: bookSeries.defaultAuthor,
+        defaultBookTypeId: bookSeries.defaultBookTypeId,
+      },
+    });
   }
 
   async updateBookSeries(id: string, bookSeries: BookSeriesDTO) {
-    return prisma.bookSeries.update({ where: { id }, data: { name: bookSeries.name } });
+    return prisma.bookSeries.update({
+      where: { id },
+      data: {
+        name: bookSeries.name,
+        defaultAuthor: bookSeries.defaultAuthor,
+        defaultBookTypeId: bookSeries.defaultBookTypeId,
+      },
+    });
   }
 
   async deleteBookSeries(id: string) {

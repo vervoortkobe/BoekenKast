@@ -17,7 +17,11 @@ export class BookTypeService {
 
     const [data, total] = await Promise.all([
       prisma.bookType.findMany({
-        include: { books: true },
+        include: { 
+          books: {
+            include: { lendings: true }
+          }
+        },
         orderBy,
         skip,
         take: parsedLimit,

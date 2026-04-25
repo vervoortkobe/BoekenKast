@@ -17,7 +17,7 @@
         <SearchBar v-model="search" placeholder="Search books..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add {{ seriesName }}
+          New Book
         </button>
       </div>
     </div>
@@ -35,7 +35,13 @@
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </span>
             </th>
-            <th>Author</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'author' }" @click="toggleSort('author')">
+              Author
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'author' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th>ISBN</th>
             <th>Type</th>
             <th>Color</th>
@@ -104,7 +110,7 @@
         <p class="bk-empty-text">Add your first book to this series.</p>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add {{ seriesName }}
+          New Book
         </button>
       </div>
     </div>
@@ -201,17 +207,19 @@ import { useRoute } from 'vue-router'
 import { getBookSeriesById } from '../../services/SeriesService'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
 import { getBookTypes } from '../../services/BookTypesService'
-import type { BookDTO, BookTypeDTO } from '../../types'
+import type { BookDTO, BookSeriesDTO, BookTypeDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import LendingModal from '../../components/LendingModal.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import BookCover from '../../components/BookCover.vue'
 import Pagination from '../../components/Pagination.vue'
+import { isLoggedIn, openLogin } from '../../services/AuthService'
 
 const route = useRoute()
 const seriesId = String(route.params.id)
-const seriesName = ref('Loading...')
+const series = ref<BookSeriesDTO | null>(null)
+const seriesName = computed(() => series.value?.name ?? 'Loading...')
 const books = ref<BookDTO[]>([])
 const bookTypes = ref<BookTypeDTO[]>([])
 const search = ref('')
@@ -270,7 +278,7 @@ function toggleSort(field: string) {
 
 function load() {
   getBookSeriesById(seriesId).subscribe({
-    next: (data: any) => (seriesName.value = data.name),
+    next: (data: any) => (series.value = data),
     error: (err: any) => console.error(err),
   })
   getBooks({ 
@@ -293,6 +301,7 @@ function load() {
 }
 
 function openForm(book?: BookDTO) {
+  if (!isLoggedIn.value) return openLogin()
   if (book) {
     editingBook.value = book
     form.value = {
@@ -305,7 +314,14 @@ function openForm(book?: BookDTO) {
     }
   } else {
     editingBook.value = null
-    form.value = { title: '', author: '', isbn: '', bookTypeId: '', color: true, imageUrl: '' }
+    form.value = { 
+      title: '', 
+      author: series.value?.defaultAuthor || '', 
+      isbn: '', 
+      bookTypeId: series.value?.defaultBookTypeId || '', 
+      color: true, 
+      imageUrl: '' 
+    }
   }
   showForm.value = true
 }
@@ -316,6 +332,7 @@ function closeForm() {
 }
 
 function save() {
+  if (!isLoggedIn.value) return openLogin()
   const payload: BookDTO = {
     title: form.value.title,
     author: form.value.author,
@@ -347,6 +364,7 @@ function save() {
 }
 
 function confirmDelete(book: BookDTO) {
+  if (!isLoggedIn.value) return openLogin()
   deletingBook.value = book
   showDelete.value = true
 }
@@ -368,6 +386,7 @@ function remove() {
 }
 
 function openLending(book: BookDTO) {
+  if (!isLoggedIn.value) return openLogin()
   lendingBook.value = book
   showLending.value = true
 }

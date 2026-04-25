@@ -1,33 +1,14 @@
 <template>
   <div>
-    <div class="bk-breadcrumb">
-      <router-link to="/types">Types</router-link>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="3"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        style="opacity: 0.5"
-      >
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
-      <span>{{ typeName }}</span>
-    </div>
-
     <div class="bk-page-header">
       <div>
-        <h1 class="bk-page-title">{{ typeName }}</h1>
+        <h1 class="bk-page-title">All Books</h1>
         <p style="color: var(--bk-text-muted); margin: 0.25rem 0 0; font-size: 0.9rem">
-          {{ total }} books of {{ typeName }}
+          {{ total }} books in total
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem">
-        <SearchBar v-model="search" placeholder="Search books..." />
+        <SearchBar v-model="search" placeholder="Search all books..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +25,7 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          New Book
+          Create Book
         </button>
       </div>
     </div>
@@ -129,8 +110,7 @@
                 </svg>
               </span>
             </th>
-            <th>ISBN</th>
-            <th>Color</th>
+            <th>Type</th>
             <th
               class="bk-sortable"
               :class="{ 'bk-sort-active': sortBy === 'bookSeriesId' }"
@@ -173,7 +153,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in filteredBooks" :key="book.id">
+          <tr v-for="book in books" :key="book.id">
             <td data-label="Cover">
               <BookCover
                 :isbn="book.isbn"
@@ -192,46 +172,7 @@
               </a>
             </td>
             <td data-label="Author">{{ book.author }}</td>
-            <td data-label="ISBN">
-              <code v-if="book.isbn" style="font-size: 0.8rem">{{ book.isbn }}</code
-              ><span v-else>—</span>
-            </td>
-            <td data-label="Color" style="text-align: center">
-              <span
-                :title="book.color ? 'Color' : 'Black & White'"
-                :style="{ color: book.color ? '#10b981' : '#ef4444' }"
-              >
-                <svg
-                  v-if="book.color"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg
-                  v-else
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </span>
-            </td>
+            <td data-label="Type">{{ book.bookType?.name ?? '—' }}</td>
             <td data-label="Series">{{ book.bookSeries?.name ?? '—' }}</td>
             <td data-label="Lendings">
               <span
@@ -343,7 +284,7 @@
           </svg>
         </div>
         <div class="bk-empty-title">No books found</div>
-        <p class="bk-empty-text">No books are assigned to this type yet.</p>
+        <p class="bk-empty-text">No books have been added yet.</p>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -360,12 +301,12 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          Add {{ typeName }}
+          Create Book
         </button>
       </div>
     </div>
 
-    <div v-else-if="!filteredBooks.length && search" class="bk-card">
+    <div v-else-if="!books.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg
@@ -409,6 +350,13 @@
                 placeholder="Author name"
                 required
               />
+            </div>
+            <div class="bk-form-group">
+              <label class="bk-form-label">Book Type</label>
+              <select v-model="form.bookTypeId" class="bk-form-select" required>
+                <option value="" disabled>Select a type</option>
+                <option v-for="t in bookTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
+              </select>
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">ISBN (Optional)</label>
@@ -488,26 +436,7 @@
         style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border)"
       >
         <button class="bk-btn bk-btn-ghost" @click="showDelete = false">Cancel</button>
-        <button class="bk-btn bk-btn-danger" @click="remove()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style="margin-right: 0.25rem"
-          >
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            ></path>
-          </svg>
-          Delete
-        </button>
+        <button class="bk-btn bk-btn-danger" @click="remove()">Delete</button>
       </div>
     </ModalDialog>
 
@@ -525,25 +454,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { getBookType } from '../../services/BookTypesService'
-import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
-import { getBookSeries, createBookSeries } from '../../services/SeriesService'
-import type { BookDTO, BookSeriesDTO } from '../../types'
-import SearchBar from '../../components/SearchBar.vue'
-import ModalDialog from '../../components/ModalDialog.vue'
-import LendingModal from '../../components/LendingModal.vue'
-import ToastNotification from '../../components/ToastNotification.vue'
-import BookCover from '../../components/BookCover.vue'
-import Pagination from '../../components/Pagination.vue'
-import { isLoggedIn, openLogin } from '../../services/AuthService'
+import { ref, onMounted, watch } from 'vue'
+import { getBooks, createBook, updateBook, deleteBook } from '../services/BooksService'
+import { getBookTypes } from '../services/BookTypesService'
+import { getBookSeries, createBookSeries } from '../services/SeriesService'
+import type { BookDTO, BookSeriesDTO, BookTypeDTO } from '../types'
+import SearchBar from '../components/SearchBar.vue'
+import ModalDialog from '../components/ModalDialog.vue'
+import LendingModal from '../components/LendingModal.vue'
+import ToastNotification from '../components/ToastNotification.vue'
+import BookCover from '../components/BookCover.vue'
+import Pagination from '../components/Pagination.vue'
+import { isLoggedIn, openLogin } from '../services/AuthService'
 
-const route = useRoute()
-const typeId = String(route.params.id)
-const typeName = ref('Loading...')
 const books = ref<BookDTO[]>([])
 const bookSeries = ref<BookSeriesDTO[]>([])
+const bookTypes = ref<BookTypeDTO[]>([])
 const search = ref('')
 
 // Pagination & Sorting state
@@ -566,40 +492,13 @@ const form = ref({
   title: '',
   author: '',
   isbn: '',
+  bookTypeId: '',
   bookSeriesId: '' as string,
   color: true,
   imageUrl: '',
 })
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
-
-function createNewSeries() {
-  if (!newSeriesName.value) return
-  createBookSeries({ name: newSeriesName.value }).subscribe({
-    next: (res: any) => {
-      toast.value?.addToast('Series created successfully', 'success')
-      bookSeries.value.push(res)
-      form.value.bookSeriesId = res.id
-      showNewSeries.value = false
-      newSeriesName.value = ''
-    },
-    error: (err: any) => {
-      toast.value?.addToast('Failed to create series', 'error')
-      console.error(err)
-    }
-  })
-}
-
-const filteredBooks = computed(() => {
-  if (!search.value) return books.value
-  const q = search.value.toLowerCase()
-  return books.value.filter(
-    (b: BookDTO) =>
-      b.title.toLowerCase().includes(q) ||
-      b.author.toLowerCase().includes(q) ||
-      b.isbn?.toLowerCase().includes(q),
-  )
-})
 
 function toggleSort(field: string) {
   if (sortBy.value === field) {
@@ -612,18 +511,12 @@ function toggleSort(field: string) {
 }
 
 function load() {
-  getBookType(typeId).subscribe({
-    next: (data: any) => {
-      typeName.value = data.name
-    },
-    error: (err: any) => console.error(err),
-  })
   getBooks({
-    typeId,
     page: page.value,
     limit: limit.value,
     sortBy: sortBy.value,
     sortOrder: sortOrder.value,
+    search: search.value,
   }).subscribe({
     next: (res: any) => {
       books.value = res.data
@@ -631,8 +524,14 @@ function load() {
     },
     error: (err: any) => console.error(err),
   })
+  
   getBookSeries({ limit: 1000 }).subscribe({
     next: (res: any) => (bookSeries.value = res.data),
+    error: (err: any) => console.error(err),
+  })
+
+  getBookTypes({ limit: 1000 }).subscribe({
+    next: (res: any) => (bookTypes.value = res.data),
     error: (err: any) => console.error(err),
   })
 }
@@ -651,13 +550,14 @@ function openForm(book?: BookDTO) {
       title: book.title,
       author: book.author,
       isbn: book.isbn || '',
+      bookTypeId: book.bookTypeId || '',
       bookSeriesId: book.bookSeriesId ?? '',
       color: book.color,
       imageUrl: book.imageUrl || '',
     }
   } else {
     editingBook.value = null
-    form.value = { title: '', author: '', isbn: '', bookSeriesId: '', color: true, imageUrl: '' }
+    form.value = { title: '', author: '', isbn: '', bookTypeId: '', bookSeriesId: '', color: true, imageUrl: '' }
   }
   showForm.value = true
 }
@@ -673,7 +573,7 @@ function save() {
     title: form.value.title,
     author: form.value.author,
     isbn: form.value.isbn,
-    bookTypeId: typeId,
+    bookTypeId: form.value.bookTypeId,
     bookSeriesId: form.value.bookSeriesId || undefined,
     color: form.value.color,
     imageUrl: form.value.imageUrl || undefined,
@@ -697,6 +597,24 @@ function save() {
   })
 }
 
+function createNewSeries() {
+  if (!isLoggedIn.value) return openLogin()
+  if (!newSeriesName.value) return
+  createBookSeries({ name: newSeriesName.value }).subscribe({
+    next: (res: any) => {
+      toast.value?.addToast('Series created successfully', 'success')
+      bookSeries.value.push(res)
+      form.value.bookSeriesId = res.id
+      showNewSeries.value = false
+      newSeriesName.value = ''
+    },
+    error: (err: any) => {
+      toast.value?.addToast('Failed to create series', 'error')
+      console.error(err)
+    }
+  })
+}
+
 function confirmDelete(book: BookDTO) {
   if (!isLoggedIn.value) return openLogin()
   deletingBook.value = book
@@ -704,6 +622,7 @@ function confirmDelete(book: BookDTO) {
 }
 
 function remove() {
+  if (!isLoggedIn.value) return openLogin()
   if (!deletingBook.value) return
   deleteBook(deletingBook.value.id!).subscribe({
     next: () => {

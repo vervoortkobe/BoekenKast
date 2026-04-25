@@ -105,6 +105,9 @@
                 >
                   {{ type.books?.length ?? 0 }} book{{ (type.books?.length ?? 0) === 1 ? '' : 's' }}
                 </span>
+                <span class="bk-badge bk-badge-success" style="margin-left: 0.25rem;" v-if="type.books?.some(b => b.lendings?.length)">
+                  {{ type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }} lending{{ type.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) === 1 ? '' : 's' }}
+                </span>
               </p>
             </router-link>
             <div style="display: flex; gap: 0.25rem">
@@ -323,6 +326,7 @@ import type { BookTypeDTO } from '../../types'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import Pagination from '../../components/Pagination.vue'
+import { isLoggedIn, openLogin } from '../../services/AuthService'
 
 const types = ref<BookTypeDTO[]>([])
 const showForm = ref(false)
@@ -357,6 +361,7 @@ function load() {
 }
 
 function openForm(type?: BookTypeDTO) {
+  if (!isLoggedIn.value) return openLogin()
   if (type) {
     editingType.value = type
     form.value = { name: type.name }
@@ -395,6 +400,7 @@ function save() {
 }
 
 function confirmDelete(type: BookTypeDTO) {
+  if (!isLoggedIn.value) return openLogin()
   deletingType.value = type
   showDelete.value = true
 }

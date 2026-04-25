@@ -17,6 +17,8 @@ export class LendingService {
     let orderBy: any = { [sortBy]: sortOrder };
     if (sortBy === 'bookTitle') {
       orderBy = { book: { title: sortOrder } };
+    } else if (sortBy === 'author') {
+      orderBy = { book: { author: sortOrder } };
     }
 
     const where = bookId ? { bookId } : {};

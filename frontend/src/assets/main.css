@@ -6,14 +6,14 @@
   --bk-danger-hover: #dc2626;
   --bk-success: #10b981;
   --bk-warning: #f59e0b;
-  --bk-surface: #e4e4e4;
-  --bk-surface-rgb: 228, 228, 228;
-  --bk-surface-alt: #ffffff;
-  --bk-text: #1a1e23;
-  --bk-text-muted: #6b7785;
-  --bk-border: #e1e4e8;
-  --bk-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --bk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --bk-surface: #ffffff;
+  --bk-surface-rgb: 255, 255, 255;
+  --bk-surface-alt: #f1f5f9;
+  --bk-text: #0f172a;
+  --bk-text-muted: #475569;
+  --bk-border: #e2e8f0;
+  --bk-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --bk-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --bk-radius: 12px;
   --bk-radius-sm: 8px;
   --bk-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -429,12 +429,12 @@ body {
 
 .bk-btn-accent {
   background: var(--bk-accent);
-  color: #1e1e2e;
+  color: white;
 }
 
 .bk-btn-accent:hover {
-  filter: brightness(0.9);
-  box-shadow: 0 4px 12px rgba(0, 206, 201, 0.3);
+  background: var(--bk-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .bk-btn-danger {

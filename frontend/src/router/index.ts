@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import AllBooks from '../pages/AllBooks.vue'
 import BookTypeList from '../pages/BookTypes/BookTypeList.vue'
 import BookTypeBooks from '../pages/BookTypes/BookTypeBooks.vue'
 import SeriesList from '../pages/Series/SeriesList.vue'
@@ -9,6 +10,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', redirect: '/types' },
+    { path: '/books', component: AllBooks },
     { path: '/types', component: BookTypeList },
     { path: '/types/:id/books', component: BookTypeBooks },
     { path: '/series', component: SeriesList },

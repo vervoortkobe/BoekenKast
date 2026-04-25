@@ -14,16 +14,20 @@ datasource db {
 
 // soort: leesboek, stripboek, encyclopedie
 model BookType {
-  id    String @id @default(cuid())
-  name  String
-  books Book[]
+  id            String       @id @default(cuid())
+  name          String
+  books         Book[]
+  defaultSeries BookSeries[] @relation("SeriesDefaultType")
 }
 
 // reeks: rode ridder, suske wiske
 model BookSeries {
-  id    String @id @default(cuid())
-  name  String
-  books Book[]
+  id                String    @id @default(cuid())
+  name              String
+  defaultAuthor     String?
+  defaultBookType   BookType? @relation("SeriesDefaultType", fields: [defaultBookTypeId], references: [id])
+  defaultBookTypeId String?
+  books             Book[]
 }
 
 // boek: titel, auteur, isbn, kleur/zwartwit

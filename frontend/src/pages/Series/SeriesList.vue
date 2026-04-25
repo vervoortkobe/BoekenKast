@@ -30,6 +30,9 @@
                 <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
                   {{ s.books?.length ?? 0 }} book{{ (s.books?.length ?? 0) === 1 ? '' : 's' }}
                 </span>
+                <span class="bk-badge bk-badge-success" style="margin-left: 0.25rem;" v-if="s.books?.some(b => b.lendings?.length)">
+                  {{ s.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }} lending{{ s.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) === 1 ? '' : 's' }}
+                </span>
               </p>
             </router-link>
             <div style="display: flex; gap: 0.25rem;">
@@ -93,6 +96,20 @@
           <label class="bk-form-label">Series Name</label>
           <input v-model="form.name" class="bk-form-input" placeholder="e.g. Harry Potter, Red Knight..." required />
         </div>
+        <div class="bk-form-group">
+          <label class="bk-form-label">Default Author (Optional)</label>
+          <input v-model="form.defaultAuthor" class="bk-form-input" placeholder="e.g. J.K. Rowling" />
+        </div>
+        <div class="bk-form-group">
+          <label class="bk-form-label">Default Book Type (Optional)</label>
+          <select v-model="form.defaultBookTypeId" class="bk-form-select">
+            <option value="">None</option>
+            <option v-for="t in bookTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
+          </select>
+          <p style="font-size: 0.8rem; color: var(--bk-text-muted); margin-top: 0.25rem;">
+            New books in this series will automatically get this type.
+          </p>
+        </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>
           <button type="submit" class="bk-btn bk-btn-primary">
@@ -123,18 +140,21 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { getBookSeries, createBookSeries, updateBookSeries, deleteBookSeries } from '../../services/SeriesService'
-import type { BookSeriesDTO } from '../../types'
+import { getBookTypes } from '../../services/BookTypesService'
+import type { BookSeriesDTO, BookTypeDTO } from '../../types'
 import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import Pagination from '../../components/Pagination.vue'
+import { isLoggedIn, openLogin } from '../../services/AuthService'
 
 const series = ref<BookSeriesDTO[]>([])
+const bookTypes = ref<BookTypeDTO[]>([])
 const showForm = ref(false)
 const showDelete = ref(false)
 const editingSeries = ref<BookSeriesDTO | null>(null)
 const deletingSeries = ref<BookSeriesDTO | null>(null)
-const form = ref({ name: '' })
+const form = ref({ name: '', defaultAuthor: '', defaultBookTypeId: '' })
 const search = ref('')
 
 // Pagination state
@@ -158,15 +178,24 @@ function load() {
     },
     error: (err: any) => console.error(err),
   })
+  getBookTypes({ limit: 1000 }).subscribe({
+    next: (res: any) => (bookTypes.value = res.data),
+    error: (err: any) => console.error(err),
+  })
 }
 
 function openForm(s?: BookSeriesDTO) {
+  if (!isLoggedIn.value) return openLogin()
   if (s) {
     editingSeries.value = s
-    form.value = { name: s.name }
+    form.value = { 
+      name: s.name,
+      defaultAuthor: s.defaultAuthor || '',
+      defaultBookTypeId: s.defaultBookTypeId || '',
+    }
   } else {
     editingSeries.value = null
-    form.value = { name: '' }
+    form.value = { name: '', defaultAuthor: '', defaultBookTypeId: '' }
   }
   showForm.value = true
 }
@@ -174,13 +203,21 @@ function openForm(s?: BookSeriesDTO) {
 function closeForm() {
   showForm.value = false
   editingSeries.value = null
-  form.value = { name: '' }
+  form.value = { name: '', defaultAuthor: '', defaultBookTypeId: '' }
 }
 
 function save() {
+  if (!isLoggedIn.value) return openLogin()
+  
+  const payload: BookSeriesDTO = {
+    name: form.value.name,
+    defaultAuthor: form.value.defaultAuthor || undefined,
+    defaultBookTypeId: form.value.defaultBookTypeId || undefined,
+  }
+
   const op = editingSeries.value
-    ? updateBookSeries(editingSeries.value.id!, form.value)
-    : createBookSeries(form.value)
+    ? updateBookSeries(editingSeries.value.id!, payload)
+    : createBookSeries(payload)
 
   op.subscribe({
     next: () => {
@@ -199,6 +236,7 @@ function save() {
 }
 
 function confirmDelete(s: BookSeriesDTO) {
+  if (!isLoggedIn.value) return openLogin()
   deletingSeries.value = s
   showDelete.value = true
 }

@@ -7,6 +7,8 @@ export interface BookTypeDTO {
 export interface BookSeriesDTO {
   id?: string;
   name: string;
+  defaultAuthor?: string;
+  defaultBookTypeId?: string;
   books?: BookDTO[];
 }
 

@@ -14,7 +14,7 @@
         <SearchBar v-model="search" placeholder="Search by borrower or book..." />
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add Lending
+          New Lending
         </button>
       </div>
     </div>
@@ -29,6 +29,13 @@
               Title
               <span class="bk-sort-icon">
                 <svg v-if="sortBy === 'bookTitle' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'author' }" @click="toggleSort('author')">
+              Author
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'author' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </span>
             </th>
@@ -73,6 +80,7 @@
                 {{ lending.book?.title ?? '—' }}
               </a>
             </td>
+            <td data-label="Author">{{ lending.book?.author ?? '—' }}</td>
             <td data-label="Borrower">{{ lending.name }}</td>
             <td data-label="Lent On">{{ formatDate(lending.date) }}</td>
             <td data-label="Return Date">{{ formatDate(lending.returnDate) }}</td>
@@ -126,7 +134,7 @@
         </p>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add Lending
+          New Lending
         </button>
       </div>
     </div>
@@ -146,10 +154,7 @@
       <form @submit.prevent="save">
         <div class="bk-form-group" v-if="!editingLending">
           <label class="bk-form-label">Book</label>
-          <select v-model="form.bookId" class="bk-form-select" required>
-            <option value="" disabled>Select a book</option>
-            <option v-for="b in books" :key="b.id" :value="b.id">{{ b.title }}</option>
-          </select>
+          <SearchableSelect v-model="form.bookId" :options="books" placeholder="Search for a book..." />
         </div>
         <div class="bk-form-group">
           <label class="bk-form-label">Borrower Name</label>
@@ -160,7 +165,7 @@
           <input v-model="form.date" type="date" class="bk-form-input" required />
         </div>
         <div class="bk-form-group">
-          <label class="bk-form-label">Return Date</label>
+          <label class="bk-form-label">Expected Return Date</label>
           <input v-model="form.returnDate" type="date" class="bk-form-input" required />
         </div>
         <div class="bk-form-group">
@@ -207,6 +212,9 @@ import ToastNotification from '../../components/ToastNotification.vue'
 import BookCover from '../../components/BookCover.vue'
 import Pagination from '../../components/Pagination.vue'
 
+import SearchableSelect from '../../components/SearchableSelect.vue'
+import { isLoggedIn, openLogin } from '../../services/AuthService'
+
 const lendings = ref<LendingDTO[]>([])
 const books = ref<BookDTO[]>([])
 const search = ref('')
@@ -223,7 +231,8 @@ const showDelete = ref(false)
 const editingLending = ref<LendingDTO | null>(null)
 const deletingLending = ref<LendingDTO | null>(null)
 
-const form = ref({ name: '', date: '', returnDate: '', bookId: '', returnedAt: null as string | null })
+const todayStr = new Date().toISOString().split('T')[0]
+const form = ref({ name: '', date: todayStr, returnDate: todayStr, bookId: '', returnedAt: null as string | null })
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
 const filteredLendings = computed(() => {
@@ -246,13 +255,11 @@ function formatDate(d: string | Date) {
 }
 
 function isOverdue(lending: LendingDTO) {
+  if (lending.returnedAt) return false
   return new Date(lending.returnDate) < new Date()
 }
 
 function toggleSort(field: string) {
-  // Map "bookTitle" to nested sorting if needed, but the backend doesn't support nested orderBy easily without changes.
-  // For now, let's just use what's available or leave it as is if not supported.
-  // Actually, I'll just keep it simple.
   if (sortBy.value === field) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
   } else {
@@ -282,6 +289,7 @@ function load() {
 }
 
 function openForm(lending?: LendingDTO) {
+  if (!isLoggedIn.value) return openLogin()
   if (lending) {
     editingLending.value = lending
     form.value = {
@@ -295,8 +303,8 @@ function openForm(lending?: LendingDTO) {
     editingLending.value = null
     form.value = { 
       name: '', 
-      date: new Date().toISOString().split('T')[0] ?? '', 
-      returnDate: '', 
+      date: todayStr, 
+      returnDate: todayStr, 
       bookId: '',
       returnedAt: null
     }
@@ -310,6 +318,7 @@ function closeForm() {
 }
 
 function save() {
+  if (!isLoggedIn.value) return openLogin()
   const payload: any = {
     name: form.value.name,
     date: new Date(form.value.date).toISOString(),
@@ -339,6 +348,7 @@ function save() {
 }
 
 function markAsReturned(lending: LendingDTO) {
+  if (!isLoggedIn.value) return openLogin()
   const payload = {
     ...lending,
     returnedAt: new Date().toISOString()
@@ -361,6 +371,7 @@ watch(search, () => {
 })
 
 function confirmDelete(lending: LendingDTO) {
+  if (!isLoggedIn.value) return openLogin()
   deletingLending.value = lending
   showDelete.value = true
 }
