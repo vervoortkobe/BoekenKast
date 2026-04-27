@@ -19,8 +19,46 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <div v-if="isLoading" class="bk-table-wrapper bk-cards-mobile">
+      <table class="bk-table">
+        <thead>
+          <tr>
+            <th style="width: 40px">#</th>
+            <th style="width: 60px;">Cover</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Borrower</th>
+            <th>Lent On</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="i in limit" :key="i">
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
+            <td><div class="bk-skeleton" style="width: 40px; height: 60px; border-radius: var(--bk-radius-sm)"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 70%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 60px; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 60px; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 50px; height: 20px; border-radius: 50px; margin: 0"></div></td>
+            <td>
+              <div class="bk-actions-cell">
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- Lendings Table -->
-    <div v-if="lendings.length" class="bk-table-wrapper bk-cards-mobile">
+    <div v-else-if="lendings.length" class="bk-table-wrapper bk-cards-mobile">
       <table class="bk-table">
         <thead>
           <tr>
@@ -127,7 +165,7 @@
     />
 
     <!-- Empty State -->
-    <div v-if="!lendings.length && !search" class="bk-card">
+    <div v-if="!isLoading && !lendings.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -143,7 +181,7 @@
       </div>
     </div>
 
-    <div v-else-if="!filteredLendings.length && search" class="bk-card">
+    <div v-if="!isLoading && !filteredLendings.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -229,6 +267,7 @@ const limit = ref(10)
 const total = ref(0)
 const sortBy = ref('returnedAt')
 const sortOrder = ref<'asc' | 'desc'>('asc')
+const isLoading = ref(true)
 
 const showForm = ref(false)
 const showDelete = ref(false)
@@ -287,6 +326,7 @@ function toggleSort(field: string) {
 }
 
 function load() {
+  isLoading.value = true
   getLendings({ 
     page: page.value, 
     limit: limit.value, 
@@ -296,8 +336,12 @@ function load() {
     next: (res: any) => {
       lendings.value = res.data
       total.value = res.total
+      isLoading.value = false
     },
-    error: (err: any) => console.error(err),
+    error: (err: any) => {
+      console.error(err)
+      isLoading.value = false
+    },
   })
   getBooks({ limit: 1000 }).subscribe({
     next: (res: any) => (books.value = res.data),

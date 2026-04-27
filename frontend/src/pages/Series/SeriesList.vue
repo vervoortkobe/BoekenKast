@@ -19,8 +19,16 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <div v-if="isLoading" class="bk-card-grid">
+      <div v-for="i in limit" :key="i" class="bk-skeleton-card">
+        <div class="bk-skeleton bk-skeleton-title"></div>
+        <div class="bk-skeleton bk-skeleton-text"></div>
+      </div>
+    </div>
+
     <!-- Cards Grid -->
-    <div v-if="series.length" class="bk-card-grid">
+    <div v-else-if="series.length" class="bk-card-grid">
       <div v-for="s in series" :key="s.id" class="bk-card">
         <div class="bk-card-body" style="padding: 1rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
@@ -63,7 +71,7 @@
     />
 
     <!-- Empty State -->
-    <div v-if="!series.length && !search" class="bk-card">
+    <div v-if="!isLoading && !series.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
@@ -79,7 +87,7 @@
       </div>
     </div>
 
-    <div v-else-if="!series.length && search" class="bk-card">
+    <div v-if="!isLoading && !series.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -164,6 +172,7 @@ const search = ref('')
 const page = ref(1)
 const limit = ref(15)
 const total = ref(0)
+const isLoading = ref(true)
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
@@ -174,6 +183,7 @@ watch(search, () => {
 })
 
 function load() {
+  isLoading.value = true
   getBookSeries({ 
     page: page.value, 
     limit: limit.value,
@@ -182,8 +192,12 @@ function load() {
     next: (res: any) => {
       series.value = res.data
       total.value = res.total
+      isLoading.value = false
     },
-    error: (err: any) => console.error(err),
+    error: (err: any) => {
+      console.error(err)
+      isLoading.value = false
+    },
   })
   getBookTypes({ limit: 1000 }).subscribe({
     next: (res: any) => (bookTypes.value = res.data),

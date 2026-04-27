@@ -22,8 +22,46 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <div v-if="isLoading" class="bk-table-wrapper bk-cards-mobile">
+      <table class="bk-table">
+        <thead>
+          <tr>
+            <th style="width: 40px">#</th>
+            <th style="width: 60px;">Cover</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Type</th>
+            <th>Color</th>
+            <th>Lendings</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="i in limit" :key="i">
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
+            <td><div class="bk-skeleton" style="width: 40px; height: 60px; border-radius: var(--bk-radius-sm)"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 40%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 70%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0; margin-left: auto; margin-right: auto"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 30px; height: 20px; border-radius: 50px; margin: 0"></div></td>
+            <td>
+              <div class="bk-actions-cell">
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- Books Table -->
-    <div v-if="books.length" class="bk-table-wrapper bk-cards-mobile">
+    <div v-else-if="books.length" class="bk-table-wrapper bk-cards-mobile">
       <table class="bk-table">
         <thead>
           <tr>
@@ -105,7 +143,7 @@
     />
 
     <!-- Empty State -->
-    <div v-if="!books.length && !search" class="bk-card">
+    <div v-if="!isLoading && !books.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
@@ -119,7 +157,7 @@
       </div>
     </div>
 
-    <div v-else-if="!books.length && search" class="bk-card">
+    <div v-if="!isLoading && !books.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -234,6 +272,7 @@ const limit = ref(10)
 const total = ref(0)
 const sortBy = ref('title')
 const sortOrder = ref<'asc' | 'desc'>('asc')
+const isLoading = ref(true)
 
 const showForm = ref(false)
 const showDelete = ref(false)
@@ -272,6 +311,7 @@ function toggleSort(field: string) {
 }
 
 function load() {
+  isLoading.value = true
   getBookSeriesById(seriesId).subscribe({
     next: (data: any) => (series.value = data),
     error: (err: any) => console.error(err),
@@ -287,8 +327,12 @@ function load() {
     next: (res: any) => {
       books.value = res.data
       total.value = res.total
+      isLoading.value = false
     },
-    error: (err: any) => console.error(err),
+    error: (err: any) => {
+      console.error(err)
+      isLoading.value = false
+    },
   })
   getBookTypes({ limit: 1000 }).subscribe({
     next: (res: any) => (bookTypes.value = res.data),

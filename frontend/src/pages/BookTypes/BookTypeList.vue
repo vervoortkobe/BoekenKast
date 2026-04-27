@@ -49,8 +49,16 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <div v-if="isLoading" class="bk-card-grid" style="margin-top: 1.5rem">
+      <div v-for="i in limit" :key="i" class="bk-skeleton-card">
+        <div class="bk-skeleton bk-skeleton-title"></div>
+        <div class="bk-skeleton bk-skeleton-text"></div>
+      </div>
+    </div>
+
     <!-- Cards Grid -->
-    <div v-if="types.length" class="bk-card-grid" style="margin-top: 1.5rem">
+    <div v-else-if="types.length" class="bk-card-grid" style="margin-top: 1.5rem">
       <div v-for="type in types" :key="type.id" class="bk-card">
         <div class="bk-card-body" style="padding: 1rem">
           <div
@@ -144,7 +152,7 @@
     />
 
     <!-- Empty State -->
-    <div v-if="!types.length && !search" class="bk-card">
+    <div v-if="!isLoading && !types.length && !search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg
@@ -188,7 +196,7 @@
     </div>
 
     <!-- No results for search -->
-    <div v-else-if="!types.length && search" class="bk-card">
+    <div v-if="!isLoading && !types.length && search" class="bk-card">
       <div class="bk-empty">
         <div class="bk-empty-icon">
           <svg
@@ -360,6 +368,7 @@ const search = ref('')
 const page = ref(1)
 const limit = ref(15)
 const total = ref(0)
+const isLoading = ref(true)
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
@@ -370,13 +379,18 @@ watch(search, () => {
 })
 
 function load() {
+  isLoading.value = true
   // We assuming the service supports a search parameter
   getBookTypes({ page: page.value, limit: limit.value, search: search.value }).subscribe({
     next: (res: any) => {
       types.value = res.data
       total.value = res.total
+      isLoading.value = false
     },
-    error: (err: any) => console.error(err),
+    error: (err: any) => {
+      console.error(err)
+      isLoading.value = false
+    },
   })
 }
 
