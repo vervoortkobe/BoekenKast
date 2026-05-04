@@ -110,12 +110,10 @@
         </div>
         <div class="bk-form-group">
           <label class="bk-form-label">Default Book Type (Optional)</label>
-          <SearchableSelect
-            v-model="form.defaultBookTypeId"
-            :options="bookTypes"
-            label-key="name"
-            placeholder="Select a default type..."
-          />
+          <select v-model="form.defaultBookTypeId" class="bk-form-select">
+            <option value="">Select a default type...</option>
+            <option v-for="t in bookTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
+          </select>
           <p style="font-size: 0.8rem; color: var(--bk-text-muted); margin-top: 0.25rem;">
             New books in this series will automatically get this type.
           </p>
@@ -156,7 +154,6 @@ import SearchBar from '../../components/SearchBar.vue'
 import ModalDialog from '../../components/ModalDialog.vue'
 import ToastNotification from '../../components/ToastNotification.vue'
 import Pagination from '../../components/Pagination.vue'
-import SearchableSelect from '../../components/SearchableSelect.vue'
 import { isLoggedIn, openLogin } from '../../services/AuthService'
 
 const series = ref<BookSeriesDTO[]>([])
