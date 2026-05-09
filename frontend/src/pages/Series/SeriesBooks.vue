@@ -15,6 +15,10 @@
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <SearchBar v-model="search" placeholder="Search books..." />
+        <button class="bk-btn bk-btn-ghost" @click="openSeriesForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          Edit Series
+        </button>
         <button class="bk-btn bk-btn-primary" @click="openForm()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           New Book
@@ -23,7 +27,7 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="isLoading" class="bk-table-wrapper bk-cards-mobile">
+    <div v-if="isLoading" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -41,7 +45,7 @@
         <tbody>
           <tr v-for="i in limit" :key="i">
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
-            <td><div class="bk-skeleton" style="width: 40px; height: 60px; border-radius: var(--bk-radius-sm)"></div></td>
+            <td><div class="bk-skeleton" style="width: 60px; height: 90px; border-radius: var(--bk-radius-sm)"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 40%; margin: 0"></div></td>
@@ -61,7 +65,7 @@
     </div>
 
     <!-- Books Table -->
-    <div v-else-if="books.length" class="bk-table-wrapper bk-cards-mobile">
+    <div v-else-if="books.length" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -83,13 +87,19 @@
             </th>
             <th>ISBN</th>
             <th>Type</th>
-            <th>Color</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'color' }" @click="toggleSort('color')">
+              Color
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'color' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th>Lendings</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(book, index) in books" :key="book.id">
+          <tr v-for="(book, index) in books" :key="book.id" tabindex="0" @keyup.enter="openForm(book)">
             <td style="color: var(--bk-text-muted); font-size: 0.85rem">
               {{ (page - 1) * limit + index + 1 }}
             </td>
@@ -174,32 +184,25 @@
           <div style="flex: 1; min-width: 250px;">
             <div class="bk-form-group">
               <label class="bk-form-label">Title</label>
-              <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
+              <input ref="titleInputRef" v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
-            <div class="bk-form-group">
-              <label class="bk-form-label">Author (Optional)</label>
-              <input v-model="form.author" class="bk-form-input" placeholder="Author name" />
-            </div>
+            <!-- Author and Type are locked to series defaults -->
             <div class="bk-form-group">
               <label class="bk-form-label">ISBN (Optional)</label>
               <input v-model="form.isbn" class="bk-form-input" placeholder="ISBN number" />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Custom Image URL (Optional)</label>
-              <input v-model="form.imageUrl" class="bk-form-input" placeholder="https://example.com/cover.jpg" />
+              <input v-model="form.imageUrl" class="bk-form-input" placeholder="https://image.com/cover.jpg" />
             </div>
+            <!-- Book type is locked to series default -->
             <div class="bk-form-group">
-              <label class="bk-form-label">Book Type</label>
-              <select v-model="form.bookTypeId" class="bk-form-select" required>
-                <option value="" disabled>Select a type...</option>
-                <option v-for="t in bookTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
-              </select>
-            </div>
-            <div class="bk-form-group">
-              <label class="bk-form-checkbox">
-                <input type="checkbox" v-model="form.color" />
-                <span>Color (uncheck for B&W)</span>
-              </label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="color-checkbox" v-model="form.color">
+                <label class="form-check-label" for="color-checkbox">
+                  Color (uncheck for B&W)
+                </label>
+              </div>
             </div>
           </div>
           <div style="width: 120px;">
@@ -230,6 +233,34 @@
       </div>
     </ModalDialog>
 
+    <!-- Edit Series Modal -->
+    <ModalDialog :show="showSeriesForm" title="Edit Series" @close="closeSeriesForm">
+      <form @submit.prevent="saveSeries">
+        <div class="bk-form-group">
+          <label class="bk-form-label">Series Name</label>
+          <input v-model="seriesForm.name" class="bk-form-input" placeholder="e.g. Harry Potter, Red Knight..." required />
+        </div>
+        <div class="bk-form-group">
+          <label class="bk-form-label">Default Author (Optional)</label>
+          <input v-model="seriesForm.defaultAuthor" class="bk-form-input" placeholder="e.g. J.K. Rowling" />
+        </div>
+        <div class="bk-form-group" style="opacity: 0.7; pointer-events: none;">
+          <label class="bk-form-label">Default Book Type</label>
+          <div class="bk-form-input" style="background: var(--bk-surface-alt)">Stripboek</div>
+          <p style="font-size: 0.8rem; color: var(--bk-text-muted); margin-top: 0.25rem;">
+            Series are always of type "Stripboek".
+          </p>
+        </div>
+        <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
+          <button type="button" class="bk-btn bk-btn-ghost" @click="closeSeriesForm">Cancel</button>
+          <button type="submit" class="bk-btn bk-btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Update
+          </button>
+        </div>
+      </form>
+    </ModalDialog>
+
     <!-- Lending Modal -->
     <LendingModal
       :show="showLending"
@@ -244,9 +275,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { getBookSeriesById } from '../../services/SeriesService'
+import { getBookSeriesById, updateBookSeries } from '../../services/SeriesService'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
 import { getBookTypes } from '../../services/BookTypesService'
 import type { BookDTO, BookSeriesDTO, BookTypeDTO } from '../../types'
@@ -275,11 +306,13 @@ const sortOrder = ref<'asc' | 'desc'>('asc')
 const isLoading = ref(true)
 
 const showForm = ref(false)
+const showSeriesForm = ref(false)
 const showDelete = ref(false)
 const showLending = ref(false)
 const editingBook = ref<BookDTO | null>(null)
 const deletingBook = ref<BookDTO | null>(null)
 const lendingBook = ref<BookDTO | null>(null)
+const titleInputRef = ref<HTMLInputElement | null>(null)
 
 const form = ref({
   title: '',
@@ -289,6 +322,47 @@ const form = ref({
   color: true,
   imageUrl: '',
 })
+
+const seriesForm = ref({ name: '', defaultAuthor: '', defaultBookTypeId: '' })
+
+function openSeriesForm() {
+  if (!isLoggedIn.value) return openLogin(() => openSeriesForm())
+  seriesForm.value = {
+    name: series.value?.name || '',
+    defaultAuthor: series.value?.defaultAuthor || '',
+    defaultBookTypeId: series.value?.defaultBookTypeId || '',
+  }
+  showSeriesForm.value = true
+}
+
+function closeSeriesForm() {
+  showSeriesForm.value = false
+}
+
+function saveSeries() {
+  if (!isLoggedIn.value) return openLogin()
+  
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  const stripboekTypeId = bookTypes.value.find(t => t.name.toLowerCase() === 'stripboek')?.id;
+
+  const payload: BookSeriesDTO = {
+    name: capitalize(seriesForm.value.name.trim()),
+    defaultAuthor: seriesForm.value.defaultAuthor ? capitalize(seriesForm.value.defaultAuthor.trim()) : undefined,
+    defaultBookTypeId: stripboekTypeId || undefined,
+  }
+
+  updateBookSeries(seriesId, payload).subscribe({
+    next: () => {
+      toast.value?.addToast('Series updated successfully', 'success')
+      closeSeriesForm()
+      load()
+    },
+    error: (err: any) => {
+      toast.value?.addToast('Something went wrong', 'error')
+      console.error(err)
+    },
+  })
+}
 
 const toast = ref<InstanceType<typeof ToastNotification>>()
 
@@ -364,6 +438,9 @@ function openForm(book?: BookDTO) {
     }
   }
   showForm.value = true
+  nextTick(() => {
+    titleInputRef.value?.focus()
+  })
 }
 
 function closeForm() {
@@ -373,14 +450,16 @@ function closeForm() {
 
 function save() {
   if (!isLoggedIn.value) return openLogin()
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
   const payload: BookDTO = {
-    title: form.value.title,
-    author: form.value.author,
-    isbn: form.value.isbn,
-    bookTypeId: form.value.bookTypeId as string,
+    title: capitalize(form.value.title.trim()),
+    author: series.value?.defaultAuthor ? capitalize(series.value.defaultAuthor.trim()) : null,
+    isbn: form.value.isbn?.replace(/\s/g, '') || null,
+    bookTypeId: series.value?.defaultBookTypeId as string,
     bookSeriesId: seriesId,
     color: form.value.color,
-    imageUrl: form.value.imageUrl || undefined,
+    imageUrl: form.value.imageUrl?.replace(/\s/g, '') || null,
   }
 
   const op = editingBook.value

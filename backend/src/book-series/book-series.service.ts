@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { prisma } from '../db/prisma.js';
 import { BookSeriesDTO } from '../dto/book-series.dto.js';
 
@@ -46,6 +46,10 @@ export class BookSeriesService {
   }
 
   async createBookSeries(bookSeries: BookSeriesDTO) {
+    const existing = await prisma.bookSeries.findFirst({ where: { name: bookSeries.name } });
+    if (existing) {
+      throw new ConflictException('Series name already exists');
+    }
     return prisma.bookSeries.create({
       data: {
         name: bookSeries.name,
@@ -56,6 +60,10 @@ export class BookSeriesService {
   }
 
   async updateBookSeries(id: string, bookSeries: BookSeriesDTO) {
+    const existing = await prisma.bookSeries.findFirst({ where: { name: bookSeries.name } });
+    if (existing && existing.id !== id) {
+      throw new ConflictException('Series name already exists');
+    }
     return prisma.bookSeries.update({
       where: { id },
       data: {

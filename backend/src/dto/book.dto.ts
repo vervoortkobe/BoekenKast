@@ -6,13 +6,13 @@ import { LendingDTO } from './lending.dto.js';
 export interface BookDTO {
   id?: string;
   title: string;
-  author?: string;
-  isbn?: string;
+  author?: string | null;
+  isbn?: string | null;
   bookType: BookTypeDTO;
   bookTypeId?: string;
   bookSeries: BookSeriesDTO;
-  bookSeriesId?: string;
+  bookSeriesId?: string | null;
   color: boolean;
-  imageUrl?: string;
+  imageUrl?: string | null;
   lendings?: LendingDTO[];
 }

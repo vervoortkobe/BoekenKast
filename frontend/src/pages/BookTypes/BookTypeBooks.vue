@@ -50,7 +50,7 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="isLoading" class="bk-table-wrapper bk-cards-mobile">
+    <div v-if="isLoading" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -68,7 +68,7 @@
         <tbody>
           <tr v-for="i in limit" :key="i">
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
-            <td><div class="bk-skeleton" style="width: 40px; height: 60px; border-radius: var(--bk-radius-sm)"></div></td>
+            <td><div class="bk-skeleton" style="width: 60px; height: 90px; border-radius: var(--bk-radius-sm)"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 40%; margin: 0"></div></td>
@@ -88,7 +88,7 @@
     </div>
 
     <!-- Books Table -->
-    <div v-else-if="books.length" class="bk-table-wrapper bk-cards-mobile">
+    <div v-else-if="books.length" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -169,7 +169,13 @@
               </span>
             </th>
             <th>ISBN</th>
-            <th>Color</th>
+            <th class="bk-sortable" :class="{ 'bk-sort-active': sortBy === 'color' }" @click="toggleSort('color')">
+              Color
+              <span class="bk-sort-icon">
+                <svg v-if="sortBy === 'color' && sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </span>
+            </th>
             <th
               class="bk-sortable"
               :class="{ 'bk-sort-active': sortBy === 'bookSeriesId' }"
@@ -212,7 +218,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(book, index) in books" :key="book.id">
+          <tr v-for="(book, index) in books" :key="book.id" tabindex="0" @keyup.enter="openForm(book)">
             <td style="color: var(--bk-text-muted); font-size: 0.85rem">
               {{ (page - 1) * limit + index + 1 }}
             </td>
@@ -441,7 +447,7 @@
           <div style="flex: 1; min-width: 250px">
             <div class="bk-form-group">
               <label class="bk-form-label">Title</label>
-              <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
+              <input ref="titleInputRef" v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Author (Optional)</label>
@@ -460,7 +466,7 @@
               <input
                 v-model="form.imageUrl"
                 class="bk-form-input"
-                placeholder="https://example.com/cover.jpg"
+                placeholder="https://image.com/cover.jpg"
               />
             </div>
             <div class="bk-form-group">
@@ -478,10 +484,12 @@
               </div>
             </div>
             <div class="bk-form-group">
-              <label class="bk-form-checkbox">
-                <input type="checkbox" v-model="form.color" />
-                <span>Color (uncheck for B&W)</span>
-              </label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="color-checkbox" v-model="form.color">
+                <label class="form-check-label" for="color-checkbox">
+                  Color (uncheck for B&W)
+                </label>
+              </div>
             </div>
           </div>
           <div style="width: 120px">
@@ -568,7 +576,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBookType } from '../../services/BookTypesService'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
@@ -606,6 +614,7 @@ const editingBook = ref<BookDTO | null>(null)
 const deletingBook = ref<BookDTO | null>(null)
 const lendingBook = ref<BookDTO | null>(null)
 const newSeriesName = ref('')
+const titleInputRef = ref<HTMLInputElement | null>(null)
 
 const form = ref({
   title: '',
@@ -703,6 +712,9 @@ function openForm(book?: BookDTO) {
     form.value = { title: '', author: '', isbn: '', bookSeriesId: '', color: true, imageUrl: '' }
   }
   showForm.value = true
+  nextTick(() => {
+    titleInputRef.value?.focus()
+  })
 }
 
 function closeForm() {
@@ -712,14 +724,16 @@ function closeForm() {
 
 function save() {
   if (!isLoggedIn.value) return openLogin()
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
   const payload: BookDTO = {
-    title: form.value.title,
-    author: form.value.author,
-    isbn: form.value.isbn,
+    title: capitalize(form.value.title.trim()),
+    author: form.value.author ? capitalize(form.value.author.trim()) : null,
+    isbn: form.value.isbn?.replace(/\s/g, '') || null,
     bookTypeId: typeId,
-    bookSeriesId: form.value.bookSeriesId || undefined,
+    bookSeriesId: form.value.bookSeriesId || null,
     color: form.value.color,
-    imageUrl: form.value.imageUrl || undefined,
+    imageUrl: form.value.imageUrl?.replace(/\s/g, '') || null,
   }
 
   const op = editingBook.value ? updateBook(editingBook.value.id!, payload) : createBook(payload)

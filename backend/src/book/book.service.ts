@@ -39,6 +39,23 @@ export class BookService {
       ];
     }
 
+    if (sortBy === 'author') {
+      const allBooks = await prisma.book.findMany({
+        where,
+        include: { bookType: true, bookSeries: true, lendings: true },
+      });
+      const total = allBooks.length;
+      allBooks.sort((a, b) => {
+        const aVal = a.author || '';
+        const bVal = b.author || '';
+        return sortOrder === 'asc' 
+          ? aVal.localeCompare(bVal, undefined, { numeric: true })
+          : bVal.localeCompare(aVal, undefined, { numeric: true });
+      });
+      const data = allBooks.slice(skip, skip + parsedLimit);
+      return { data, total };
+    }
+
     const [data, total] = await Promise.all([
       prisma.book.findMany({
         where,

@@ -20,45 +20,93 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="isLoading" class="bk-card-grid">
-      <div v-for="i in limit" :key="i" class="bk-skeleton-card">
-        <div class="bk-skeleton bk-skeleton-title"></div>
-        <div class="bk-skeleton bk-skeleton-text"></div>
-      </div>
+    <div v-if="isLoading" class="bk-table-wrapper">
+      <table class="bk-table">
+        <thead>
+          <tr>
+            <th style="width: 40px">#</th>
+            <th>Name</th>
+            <th>Default Author</th>
+            <th>Default Type</th>
+            <th>Books</th>
+            <th>Lendings</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="i in limit" :key="i">
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 50%; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 30px; height: 20px; border-radius: 50px; margin: 0"></div></td>
+            <td><div class="bk-skeleton bk-skeleton-text" style="width: 30px; height: 20px; border-radius: 50px; margin: 0"></div></td>
+            <td>
+              <div class="bk-actions-cell">
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+                <div class="bk-skeleton" style="width: 32px; height: 32px; border-radius: var(--bk-radius-sm)"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Cards Grid -->
-    <div v-else-if="series.length" class="bk-card-grid">
-      <div v-for="s in series" :key="s.id" class="bk-card">
-        <div class="bk-card-body" style="padding: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
-            <router-link :to="`/series/${s.id}/books`" style="text-decoration: none; flex: 1;">
-              <h3 class="bk-card-title" style="margin: 0; font-size: 1.2rem;">{{ s.name }}</h3>
-              <p class="bk-card-subtitle" style="margin-top: 0.25rem;">
-                <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
-                  {{ s.books?.length ?? 0 }} book{{ (s.books?.length ?? 0) === 1 ? '' : 's' }}
-                </span>
-                <span class="bk-badge bk-badge-success" style="margin-left: 0.25rem;" v-if="s.books?.some(b => b.lendings?.length)">
-                  {{ s.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }} lending{{ s.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) === 1 ? '' : 's' }}
-                </span>
-              </p>
-            </router-link>
-            <div style="display: flex; gap: 0.25rem;">
-              <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click.stop.prevent="openForm(s)" title="Edit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              </button>
-              <button
-                class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon"
-                :disabled="(s.books?.length ?? 0) > 0"
-                :title="(s.books?.length ?? 0) > 0 ? 'Cannot delete: books belong to this series' : 'Delete'"
-                @click.stop.prevent="confirmDelete(s)"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Table -->
+    <div v-else-if="series.length" class="bk-table-wrapper">
+      <table class="bk-table">
+        <thead>
+          <tr>
+            <th style="width: 40px">#</th>
+            <th>Name</th>
+            <th>Default Author</th>
+            <th>Default Type</th>
+            <th>Books</th>
+            <th>Lendings</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(s, index) in series" :key="s.id" tabindex="0" @keyup.enter="$router.push(`/series/${s.id}/books`)">
+            <td style="color: var(--bk-text-muted); font-size: 0.85rem">
+              {{ (page - 1) * limit + index + 1 }}
+            </td>
+            <td data-label="Name">
+              <router-link :to="`/series/${s.id}/books`" style="text-decoration: none; color: inherit; font-weight: 700;">
+                {{ s.name }}
+              </router-link>
+            </td>
+            <td data-label="Default Author">{{ s.defaultAuthor || '—' }}</td>
+            <td data-label="Default Type">{{ bookTypes.find(t => t.id === s.defaultBookTypeId)?.name || '—' }}</td>
+            <td data-label="Books">
+              <span :class="['bk-badge', (s.books?.length ?? 0) > 0 ? 'bk-badge-primary' : 'bk-badge-warning']">
+                {{ s.books?.length ?? 0 }}
+              </span>
+            </td>
+            <td data-label="Lendings">
+              <span class="bk-badge bk-badge-success" v-if="s.books?.some(b => b.lendings?.length)">
+                {{ s.books?.reduce((acc, b) => acc + (b.lendings?.length || 0), 0) }}
+              </span>
+              <span v-else>—</span>
+            </td>
+            <td>
+              <div class="bk-actions-cell">
+                <button class="bk-btn bk-btn-ghost bk-btn-sm bk-btn-icon" @click.stop.prevent="openForm(s)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+                <button
+                  class="bk-btn bk-btn-danger bk-btn-sm bk-btn-icon"
+                  :disabled="(s.books?.length ?? 0) > 0"
+                  :title="(s.books?.length ?? 0) > 0 ? 'Cannot delete: books belong to this series' : 'Delete'"
+                  @click.stop.prevent="confirmDelete(s)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Pagination -->
@@ -108,14 +156,11 @@
           <label class="bk-form-label">Default Author (Optional)</label>
           <input v-model="form.defaultAuthor" class="bk-form-input" placeholder="e.g. J.K. Rowling" />
         </div>
-        <div class="bk-form-group">
-          <label class="bk-form-label">Default Book Type (Optional)</label>
-          <select v-model="form.defaultBookTypeId" class="bk-form-select">
-            <option value="">Select a default type...</option>
-            <option v-for="t in bookTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
-          </select>
+        <div class="bk-form-group" style="opacity: 0.7; pointer-events: none;">
+          <label class="bk-form-label">Default Book Type</label>
+          <div class="bk-form-input" style="background: var(--bk-surface-alt)">Stripboek</div>
           <p style="font-size: 0.8rem; color: var(--bk-text-muted); margin-top: 0.25rem;">
-            New books in this series will automatically get this type.
+            Series are always of type "Stripboek".
           </p>
         </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
@@ -227,10 +272,20 @@ function closeForm() {
 function save() {
   if (!isLoggedIn.value) return openLogin()
   
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  const name = capitalize(form.value.name.trim());
+
+  if (series.value.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== editingSeries.value?.id)) {
+    toast.value?.addToast('Series with this name already exists', 'error');
+    return;
+  }
+
+  const stripboekTypeId = bookTypes.value.find(t => t.name.toLowerCase() === 'stripboek')?.id;
+
   const payload: BookSeriesDTO = {
-    name: form.value.name,
-    defaultAuthor: form.value.defaultAuthor || undefined,
-    defaultBookTypeId: form.value.defaultBookTypeId || undefined,
+    name,
+    defaultAuthor: form.value.defaultAuthor ? capitalize(form.value.defaultAuthor.trim()) : undefined,
+    defaultBookTypeId: stripboekTypeId || undefined,
   }
 
   const op = editingSeries.value

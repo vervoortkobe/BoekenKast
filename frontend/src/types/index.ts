@@ -25,13 +25,13 @@ export interface LendingDTO {
 export interface BookDTO {
   id?: string;
   title: string;
-  author?: string;
+  author?: string | null;
   isbn?: string | null;
   bookType?: BookTypeDTO;
   bookTypeId?: string;
   bookSeries?: BookSeriesDTO;
   bookSeriesId?: string | null;
   color: boolean;
-  imageUrl?: string;
+  imageUrl?: string | null;
   lendings?: LendingDTO[];
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="book-cover-container" :style="{ width: size === 'small' ? '40px' : '100px', height: size === 'small' ? '60px' : '150px' }">
+  <div class="book-cover-container" :style="{ width: size === 'small' ? '60px' : '120px', height: size === 'small' ? '90px' : '180px' }">
     <div v-if="loading && computedSrc" class="book-cover-loading">
       <div class="bk-spinner"></div>
     </div>
@@ -34,17 +34,26 @@ const props = defineProps<{
 const failed = ref(false)
 const loading = ref(false)
 const imgRef = ref<HTMLImageElement | null>(null)
+const currentSourceIndex = ref(0)
 
-const computedSrc = computed(() => {
-  if (props.customUrl) return props.customUrl
+const sources = computed(() => {
+  if (props.customUrl) return [props.customUrl]
   if (props.isbn) {
-    return `https://webservices.bibliotheek.be/index.php?func=cover&ISBN=${props.isbn}&VLACCnr=&CDR=&EAN=&ISMN=&EBS=&coversize=medium`
+    return [
+      `https://webservices.bibliotheek.be/index.php?func=cover&ISBN=${props.isbn}&VLACCnr=&CDR=&EAN=&ISMN=&EBS=&coversize=medium`,
+      `https://standaarduitgeverij.be/cover/cover.php?isbn=${props.isbn}`,
+    ]
   }
-  return ''
+  return []
 })
 
-watch(() => computedSrc.value, (newVal) => {
-  if (newVal) {
+const computedSrc = computed(() => {
+  return sources.value[currentSourceIndex.value] || ''
+})
+
+watch(() => sources.value, (newVal) => {
+  currentSourceIndex.value = 0
+  if (newVal.length > 0) {
     loading.value = true
     failed.value = false
   } else {
@@ -54,14 +63,18 @@ watch(() => computedSrc.value, (newVal) => {
 })
 
 function handleError() {
-  failed.value = true
-  loading.value = false
+  if (currentSourceIndex.value < sources.value.length - 1) {
+    currentSourceIndex.value++
+  } else {
+    failed.value = true
+    loading.value = false
+  }
 }
 
 function handleLoad() {
   loading.value = false
   if (imgRef.value && imgRef.value.naturalWidth <= 1 && imgRef.value.naturalHeight <= 1) {
-    failed.value = true
+    handleError()
   }
 }
 </script>

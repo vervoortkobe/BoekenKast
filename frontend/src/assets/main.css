@@ -433,6 +433,11 @@ body {
   background: rgba(59, 130, 246, 0.15);
 }
 
+.bk-table tr:focus {
+  outline: 2px solid var(--bk-primary);
+  outline-offset: -2px;
+}
+
 .bk-table .bk-actions-cell {
   display: flex;
   align-items: center;

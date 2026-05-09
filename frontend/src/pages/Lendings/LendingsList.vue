@@ -20,7 +20,7 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="isLoading" class="bk-table-wrapper bk-cards-mobile">
+    <div v-if="isLoading" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Lendings Table -->
-    <div v-else-if="lendings.length" class="bk-table-wrapper bk-cards-mobile">
+    <div v-else-if="lendings.length" class="bk-table-wrapper">
       <table class="bk-table">
         <thead>
           <tr>
@@ -110,7 +110,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(lending, index) in filteredLendings" :key="lending.id">
+          <tr v-for="(lending, index) in filteredLendings" :key="lending.id" tabindex="0" @keyup.enter="openForm(lending)">
             <td style="color: var(--bk-text-muted); font-size: 0.85rem">
               {{ (page - 1) * limit + index + 1 }}
             </td>
@@ -211,10 +211,12 @@
           <input v-model="form.returnDate" type="date" class="bk-form-input" required />
         </div>
         <div class="bk-form-group">
-          <label class="bk-form-checkbox">
-            <input type="checkbox" :checked="!!form.returnedAt" @change="form.returnedAt = ($event.target as HTMLInputElement).checked ? new Date().toISOString() : null" />
-            <span>Mark as Returned</span>
-          </label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="returned-checkbox" :checked="!!form.returnedAt" @change="form.returnedAt = ($event.target as HTMLInputElement).checked ? new Date().toISOString() : null" />
+            <label class="form-check-label" for="returned-checkbox">
+              Mark as Returned
+            </label>
+          </div>
         </div>
         <div class="bk-modal-footer" style="padding: 1rem 0 0; border-top: 1px solid var(--bk-border);">
           <button type="button" class="bk-btn bk-btn-ghost" @click="closeForm">Cancel</button>

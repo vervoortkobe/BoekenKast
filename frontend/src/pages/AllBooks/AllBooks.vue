@@ -48,7 +48,7 @@
         <tbody>
           <tr v-for="i in limit" :key="i">
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 20px; margin: 0"></div></td>
-            <td><div class="bk-skeleton" style="width: 40px; height: 60px; border-radius: var(--bk-radius-sm)"></div></td>
+            <td><div class="bk-skeleton" style="width: 60px; height: 90px; border-radius: var(--bk-radius-sm)"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 80%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 60%; margin: 0"></div></td>
             <td><div class="bk-skeleton bk-skeleton-text" style="width: 70%; margin: 0"></div></td>
@@ -226,7 +226,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(book, index) in books" :key="book.id">
+          <tr v-for="(book, index) in books" :key="book.id" tabindex="0" @keyup.enter="openForm(book)">
             <td style="color: var(--bk-text-muted); font-size: 0.85rem">
               {{ (page - 1) * limit + index + 1 }}
             </td>
@@ -416,7 +416,7 @@
           <div style="flex: 1; min-width: 250px">
             <div class="bk-form-group">
               <label class="bk-form-label">Title</label>
-              <input v-model="form.title" class="bk-form-input" placeholder="Book title" required />
+              <input ref="titleInputRef" v-model="form.title" class="bk-form-input" placeholder="Book title" required />
             </div>
             <div class="bk-form-group">
               <label class="bk-form-label">Author (Optional)</label>
@@ -442,7 +442,7 @@
               <input
                 v-model="form.imageUrl"
                 class="bk-form-input"
-                placeholder="https://example.com/cover.jpg"
+                placeholder="https://image.com/cover.jpg"
               />
             </div>
             <div class="bk-form-group">
@@ -460,10 +460,12 @@
               </div>
             </div>
             <div class="bk-form-group">
-              <label class="bk-form-checkbox">
-                <input type="checkbox" v-model="form.color" />
-                <span>Color (uncheck for B&W)</span>
-              </label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="color-checkbox" v-model="form.color">
+                <label class="form-check-label" for="color-checkbox">
+                  Color (uncheck for B&W)
+                </label>
+              </div>
             </div>
           </div>
           <div style="width: 120px">
@@ -531,7 +533,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { getBooks, createBook, updateBook, deleteBook } from '../../services/BooksService'
 import { getBookTypes } from '../../services/BookTypesService'
 import { getBookSeries, createBookSeries } from '../../services/SeriesService'
@@ -566,6 +568,7 @@ const editingBook = ref<BookDTO | null>(null)
 const deletingBook = ref<BookDTO | null>(null)
 const lendingBook = ref<BookDTO | null>(null)
 const newSeriesName = ref('')
+const titleInputRef = ref<HTMLInputElement | null>(null)
 
 const form = ref({
   title: '',
@@ -644,6 +647,9 @@ function openForm(book?: BookDTO) {
     form.value = { title: '', author: '', isbn: '', bookTypeId: '', bookSeriesId: '', color: true, imageUrl: '' }
   }
   showForm.value = true
+  nextTick(() => {
+    titleInputRef.value?.focus()
+  })
 }
 
 function closeForm() {
@@ -653,14 +659,16 @@ function closeForm() {
 
 function save() {
   if (!isLoggedIn.value) return openLogin()
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
   const payload: BookDTO = {
-    title: form.value.title,
-    author: form.value.author,
-    isbn: form.value.isbn,
+    title: capitalize(form.value.title.trim()),
+    author: form.value.author ? capitalize(form.value.author.trim()) : null,
+    isbn: form.value.isbn?.replace(/\s/g, '') || null,
     bookTypeId: form.value.bookTypeId,
-    bookSeriesId: form.value.bookSeriesId || undefined,
+    bookSeriesId: form.value.bookSeriesId || null,
     color: form.value.color,
-    imageUrl: form.value.imageUrl || undefined,
+    imageUrl: form.value.imageUrl?.replace(/\s/g, '') || null,
   }
 
   const op = editingBook.value ? updateBook(editingBook.value.id!, payload) : createBook(payload)
@@ -684,7 +692,20 @@ function save() {
 function createNewSeries() {
   if (!isLoggedIn.value) return openLogin(createNewSeries)
   if (!newSeriesName.value) return
-  createBookSeries({ name: newSeriesName.value }).subscribe({
+  const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  const name = capitalize(newSeriesName.value.trim());
+  
+  if (bookSeries.value.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+    toast.value?.addToast('Series with this name already exists', 'error');
+    return;
+  }
+
+  const stripboekTypeId = bookTypes.value.find(t => t.name.toLowerCase() === 'stripboek')?.id;
+
+  createBookSeries({ 
+    name,
+    defaultBookTypeId: stripboekTypeId || undefined
+  }).subscribe({
     next: (res: any) => {
       toast.value?.addToast('Series created successfully', 'success')
       bookSeries.value.push(res)
