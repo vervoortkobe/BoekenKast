@@ -5,8 +5,6 @@ services:
     container_name: boekenkast-backend
     ports:
       - "3002:3000"
-    volumes:
-      - ./backend/prisma:/app/prisma
     environment:
       - PORT
       - DATABASE_URL=file:/app/prisma/dev.db
